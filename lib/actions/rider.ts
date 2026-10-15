@@ -137,9 +137,16 @@ export async function markDeliveryStatus(deliveryId: string, status: 'in-transit
       .single()
 
     if (delivery) {
+      const orderUpdates: Record<string, string> = { status: orderStatusMap[status] }
+      if (status === 'delivered') {
+        orderUpdates.payment_status = 'success'
+      } else if (status === 'failed') {
+        orderUpdates.payment_status = 'failed'
+      }
+
       await supabase
         .from('orders')
-        .update({ status: orderStatusMap[status] })
+        .update(orderUpdates)
         .eq('id', delivery.order_id)
         
       if (status === 'in-transit') {
@@ -265,7 +272,13 @@ export async function bulkMarkDeliveryStatus(deliveryIds: string[], status: 'in-
     if (orderStatusMap[status]) {
       const { data: delivery } = await supabase.from('deliveries').select('order_id').eq('id', deliveryId).single()
       if (delivery) {
-        await supabase.from('orders').update({ status: orderStatusMap[status] }).eq('id', delivery.order_id)
+        const orderUpdates: Record<string, string> = { status: orderStatusMap[status] }
+        if (status === 'delivered') {
+          orderUpdates.payment_status = 'success'
+        } else if (status === 'failed') {
+          orderUpdates.payment_status = 'failed'
+        }
+        await supabase.from('orders').update(orderUpdates).eq('id', delivery.order_id)
         if (status === 'in-transit') {
           const { data: existingPayment } = await supabase
             .from('payments')

@@ -93,6 +93,7 @@ export function CustomerSidebar() {
           <SidebarMenuItem>
             <form action={logout}>
               <SidebarMenuButton
+                suppressHydrationWarning
                 onClick={(e) => {
                   e.currentTarget.closest('form')?.requestSubmit()
                 }}

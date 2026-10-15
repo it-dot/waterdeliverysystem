@@ -79,9 +79,24 @@ export default async function CustomerOrdersPage() {
                       <span className="font-mono text-lg font-bold tabular-nums text-foreground">
                         ₱{order.total_amount.toFixed(2)}
                       </span>
-                      <span className="block text-xs text-muted-foreground capitalize">
-                        Payment: {order.payment_status || 'Pending'}
-                      </span>
+                      <div className="mt-0.5">
+                        <span className={`inline-flex items-center gap-1.5 text-xs font-medium capitalize ${
+                          order.payment_status === 'paid' || order.payment_status === 'success'
+                            ? 'text-emerald-600 dark:text-emerald-400'
+                            : order.payment_status === 'failed'
+                            ? 'text-red-600 dark:text-red-400'
+                            : 'text-amber-600 dark:text-amber-400'
+                        }`}>
+                          <span className={`size-1.5 rounded-full ${
+                            order.payment_status === 'paid' || order.payment_status === 'success'
+                              ? 'bg-emerald-500'
+                              : order.payment_status === 'failed'
+                              ? 'bg-red-500'
+                              : 'bg-amber-500'
+                          }`} />
+                          Payment: {order.payment_status === 'success' ? 'Paid' : (order.payment_status || 'Pending')}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   

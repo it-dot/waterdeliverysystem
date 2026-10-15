@@ -30,7 +30,7 @@ export async function recordPayment(formData: FormData) {
   // Update order payment status
   await supabase
     .from('orders')
-    .update({ payment_status: 'success' })
+    .update({ payment_status: 'paid' })
     .eq('id', order_id)
 
   // Auto-generate invoice

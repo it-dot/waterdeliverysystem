@@ -11,6 +11,8 @@ import Link from 'next/link'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
@@ -20,6 +22,12 @@ export default function LoginPage() {
       toast.error(result.error)
       setLoading(false)
     }
+  }
+
+  function fillDemo(demoEmail: string, demoPass: string) {
+    setEmail(demoEmail)
+    setPassword(demoPass)
+    toast.success('Demo credentials loaded')
   }
 
   return (
@@ -46,7 +54,7 @@ export default function LoginPage() {
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="rounded-xl border border-border/80 bg-card p-6 sm:p-8 shadow-xs">
-          <form action={handleSubmit} className="space-y-4">
+          <form action={handleSubmit} className="space-y-4" aria-busy={loading}>
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Email address
@@ -56,7 +64,9 @@ export default function LoginPage() {
                 name="email"
                 type="email"
                 autoComplete="email"
-                placeholder=""
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@clearwell.com"
                 required
                 className="h-10"
               />
@@ -67,29 +77,40 @@ export default function LoginPage() {
                 <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Password
                 </Label>
-                <Link href="#" className="text-xs text-primary hover:underline">
+                <button
+                  type="button"
+                  onClick={() => toast.info('Contact station admin to reset credentials')}
+                  className="text-xs text-primary hover:underline cursor-pointer"
+                >
                   Forgot password?
-                </Link>
+                </button>
               </div>
               <Input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 className="h-10"
               />
             </div>
 
-            <Button type="submit" className="w-full h-10 mt-2 font-medium" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full h-10 mt-2 font-medium"
+              disabled={loading}
+              aria-live="polite"
+            >
               {loading ? (
                 <>
                   <Loader2 className="size-4 animate-spin mr-2" />
-                  Signing in...
+                  <span>Signing in...</span>
                 </>
               ) : (
                 <>
-                  Sign in
+                  <span>Sign in</span>
                   <ArrowRight className="size-4 ml-1.5" />
                 </>
               )}
@@ -98,18 +119,28 @@ export default function LoginPage() {
 
           {/* Quick Demo Access Bar */}
           <div className="mt-6 pt-5 border-t border-border/70">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Demo Credentials</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              Demo Credentials (Tap to fill)
+            </p>
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="rounded-lg border border-border/70 bg-muted/40 p-2.5">
+              <button
+                type="button"
+                onClick={() => fillDemo('admin@clearwell.com', 'password123')}
+                className="min-h-[44px] rounded-lg border border-border/70 bg-muted/40 p-2.5 text-left transition-all hover:bg-muted hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+              >
                 <p className="font-semibold text-foreground">Admin Station</p>
                 <p className="font-mono text-[11px] text-muted-foreground truncate mt-0.5">admin@clearwell.com</p>
                 <p className="font-mono text-[10px] text-muted-foreground/70">password123</p>
-              </div>
-              <div className="rounded-lg border border-border/70 bg-muted/40 p-2.5">
+              </button>
+              <button
+                type="button"
+                onClick={() => fillDemo('zane@clearwell.com', 'password123')}
+                className="min-h-[44px] rounded-lg border border-border/70 bg-muted/40 p-2.5 text-left transition-all hover:bg-muted hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+              >
                 <p className="font-semibold text-foreground">Courier Fleet</p>
                 <p className="font-mono text-[11px] text-muted-foreground truncate mt-0.5">zane@clearwell.com</p>
                 <p className="font-mono text-[10px] text-muted-foreground/70">password123</p>
-              </div>
+              </button>
             </div>
           </div>
 

@@ -163,7 +163,7 @@ export function RiderSidebar() {
             )
           })}
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Logout" onClick={() => logout()}>
+            <SidebarMenuButton tooltip="Logout" onClick={() => logout()} suppressHydrationWarning>
               <LogOut className="size-4" />
               <span>Logout</span>
             </SidebarMenuButton>

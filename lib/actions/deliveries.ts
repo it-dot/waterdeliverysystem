@@ -78,9 +78,16 @@ export async function updateDeliveryStatus(deliveryId: string, status: string) {
     'failed': 'cancelled',
   }
   if (orderStatusMap[status]) {
+    const orderUpdates: Record<string, string> = { status: orderStatusMap[status] }
+    if (status === 'delivered') {
+      orderUpdates.payment_status = 'success'
+    } else if (status === 'failed') {
+      orderUpdates.payment_status = 'failed'
+    }
+
     await supabase
       .from('orders')
-      .update({ status: orderStatusMap[status] })
+      .update(orderUpdates)
       .eq('id', delivery.order_id)
       if (status === 'in-transit') {
         const { data: existingPayment } = await supabase
@@ -222,7 +229,13 @@ export async function bulkUpdateDeliveryStatus(deliveryIds: string[], status: st
         'failed': 'cancelled',
       }
       if (orderStatusMap[status]) {
-        await supabase.from('orders').update({ status: orderStatusMap[status] }).eq('id', delivery.order_id)
+        const orderUpdates: Record<string, string> = { status: orderStatusMap[status] }
+        if (status === 'delivered') {
+          orderUpdates.payment_status = 'success'
+        } else if (status === 'failed') {
+          orderUpdates.payment_status = 'failed'
+        }
+        await supabase.from('orders').update(orderUpdates).eq('id', delivery.order_id)
         if (status === 'in-transit') {
           const { data: existingPayment } = await supabase
             .from('payments')

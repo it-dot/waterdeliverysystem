@@ -86,7 +86,7 @@ export interface Database {
           delivery_fee: number
           total_amount: number
           payment_method: 'cash' | 'gcash' | 'card'
-          payment_status: 'pending' | 'paid' | 'failed' | 'refunded'
+          payment_status: 'pending' | 'success' | 'paid' | 'failed' | 'refunded'
           created_at: string
           updated_at: string
         }
@@ -99,7 +99,7 @@ export interface Database {
           delivery_fee: number
           total_amount: number
           payment_method: 'cash' | 'gcash' | 'card'
-          payment_status?: 'pending' | 'paid' | 'failed' | 'refunded'
+          payment_status?: 'pending' | 'success' | 'paid' | 'failed' | 'refunded'
           created_at?: string
           updated_at?: string
         }
@@ -112,7 +112,7 @@ export interface Database {
           delivery_fee?: number
           total_amount?: number
           payment_method?: 'cash' | 'gcash' | 'card'
-          payment_status?: 'pending' | 'paid' | 'failed' | 'refunded'
+          payment_status?: 'pending' | 'success' | 'paid' | 'failed' | 'refunded'
           created_at?: string
           updated_at?: string
         }

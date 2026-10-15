@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
           // Additionally update order status
           await supabase
             .from('orders')
-            .update({ payment_status: 'success' })
+            .update({ payment_status: 'paid' })
             .eq('id', payment.order_id)
 
           // Auto-generate invoice
