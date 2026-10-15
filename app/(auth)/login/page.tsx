@@ -56,7 +56,7 @@ export default function LoginPage() {
                 name="email"
                 type="email"
                 autoComplete="email"
-                placeholder="name@clearwell.com"
+                placeholder=""
                 required
                 className="h-10"
               />
