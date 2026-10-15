@@ -20,7 +20,7 @@ export function RiderHeader({ profile }: { profile?: { full_name: string } }) {
       <div className="flex items-center gap-3">
         <div className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
           <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Active Shift • On Route</span>
+          <span>Active Shift</span>
         </div>
         <NotificationsMenu role="rider" />
         <ThemeToggle />
