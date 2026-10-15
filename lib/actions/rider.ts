@@ -240,6 +240,8 @@ export async function markDeliveryStatus(deliveryId: string, status: 'in-transit
   revalidatePath('/rider/history')
   revalidatePath('/admin/deliveries')
   revalidatePath('/admin/orders')
+  revalidatePath('/customer/dashboard')
+  revalidatePath('/customer/orders')
   return { success: true }
 }
 
@@ -362,5 +364,7 @@ export async function bulkMarkDeliveryStatus(deliveryIds: string[], status: 'in-
   revalidatePath('/rider/history')
   revalidatePath('/admin/deliveries')
   revalidatePath('/admin/orders')
+  revalidatePath('/customer/dashboard')
+  revalidatePath('/customer/orders')
   return { success: true }
 }

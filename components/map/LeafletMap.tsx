@@ -26,6 +26,7 @@ export default function LeafletMap({
 
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
+  const [directionsFailed, setDirectionsFailed] = useState<boolean>(false);
   
   const fetchedRouteRef = React.useRef("");
   
@@ -91,7 +92,7 @@ export default function LeafletMap({
       ))}
 
       {/* Render Routes */}
-      {riderLocation && activeLoc && fetchedRouteRef.current !== currentRouteKey && (
+      {riderLocation && activeLoc && !directionsFailed && fetchedRouteRef.current !== currentRouteKey && (
         <DirectionsService
           options={{
             origin: { lat: riderLocation[0], lng: riderLocation[1] },
@@ -99,12 +100,13 @@ export default function LeafletMap({
             travelMode: google.maps.TravelMode.DRIVING,
           }}
           callback={(res, status) => {
+            fetchedRouteRef.current = currentRouteKey;
             if (status === "OK" && res) {
-              fetchedRouteRef.current = currentRouteKey;
               setDirections(res);
+              setDirectionsFailed(false);
             } else {
-              console.error("Directions request failed:", status);
-              fetchedRouteRef.current = currentRouteKey;
+              setDirections(null);
+              setDirectionsFailed(true);
             }
           }}
         />

@@ -27,6 +27,7 @@ export default async function CustomerDashboardPage() {
   const activeSchedules = data?.activeSchedules || []
   const pendingInvoices = data?.pendingInvoices || []
 
+  const activeCount = activeOrders.filter((o: any) => o.status !== 'delivered' && o.status !== 'cancelled').length
   const nextOrder = activeOrders[0]
 
   // Extract assigned rider/delivery info if available
@@ -82,10 +83,10 @@ export default async function CustomerDashboardPage() {
           </div>
           <div className="mt-4 flex flex-col gap-1">
             <h3 className="text-3xl font-bold font-mono tabular-nums tracking-tight text-foreground">
-              {activeOrders.length}
+              {activeCount}
             </h3>
             <p className="text-xs text-muted-foreground">
-              {activeOrders.length > 0 ? "Fulfillment in progress" : "No orders in transit"}
+              {activeCount > 0 ? "Fulfillment in progress" : "No orders in transit"}
             </p>
           </div>
         </div>

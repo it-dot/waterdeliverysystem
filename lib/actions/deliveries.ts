@@ -178,6 +178,8 @@ export async function updateDeliveryStatus(deliveryId: string, status: string) {
   revalidatePath('/admin/orders')
   revalidatePath('/admin/payments')
   revalidatePath('/admin/dashboard')
+  revalidatePath('/customer/dashboard')
+  revalidatePath('/customer/orders')
   return { success: true }
 }
 

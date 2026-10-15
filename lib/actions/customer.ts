@@ -18,12 +18,12 @@ export const getCustomerDashboardStats = cache(async () => {
     { data: activeSchedules },
     { data: pendingInvoices }
   ] = await Promise.all([
-    // 1. Get active orders with assigned rider details
+    // 1. Get active and recent orders with assigned rider details
     adminClient
       .from('orders')
       .select('id, status, total_amount, created_at, delivery_address, order_items(products(name)), deliveries(id, status, rider_id, profiles:rider_id(full_name, phone))')
       .eq('customer_id', user.id)
-      .in('status', ['pending', 'processing', 'in-transit'])
+      .in('status', ['pending', 'processing', 'in-transit', 'delivered'])
       .order('created_at', { ascending: false })
       .limit(10),
 

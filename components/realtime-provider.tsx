@@ -10,6 +10,23 @@ export function RealtimeProvider() {
   const supabase = createClient()
 
   useEffect(() => {
+    let currentUserId: string | null = null
+    let currentUserRole: string | null = null
+
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (user) {
+        currentUserId = user.id
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+        if (profile?.role) {
+          currentUserRole = profile.role
+        }
+      }
+    })
+
     // We create a single channel for all our database changes
     const channel = supabase
       .channel('system-changes')
@@ -18,9 +35,55 @@ export function RealtimeProvider() {
         { event: '*', schema: 'public', table: 'orders' },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            toast.success('A new order has been placed!')
+            if (currentUserRole === 'admin' || currentUserRole === 'dispatcher') {
+              toast.success('A new order has been placed!')
+            }
           } else if (payload.eventType === 'UPDATE') {
-            toast.info(`Order #${payload.new.id.slice(0, 8).toUpperCase()} was updated.`)
+            const newRecord = payload.new as any
+            const isMyOrder = currentUserId && newRecord?.customer_id === currentUserId
+            const shortId = newRecord?.id ? newRecord.id.slice(0, 8).toUpperCase() : ""
+
+            if (isMyOrder) {
+              if (newRecord?.status === 'in-transit') {
+                toast.info("🚚 Delivery On The Way!", {
+                  description: `Your water delivery for order #${shortId} is in transit. The rider is en route to your address!`,
+                  duration: 8000,
+                })
+                window.dispatchEvent(new CustomEvent('clearwell:notification', {
+                  detail: {
+                    title: "Delivery On The Way",
+                    desc: `Your order #${shortId} is in-transit and will arrive shortly.`,
+                    time: "Just now"
+                  }
+                }))
+              } else if (newRecord?.status === 'delivered') {
+                toast.success("💧 Product Delivered!", {
+                  description: `Your water products for order #${shortId} have arrived! Thank you for ordering with Clearwell.`,
+                  duration: 9000,
+                })
+                window.dispatchEvent(new CustomEvent('clearwell:notification', {
+                  detail: {
+                    title: "Product Delivered",
+                    desc: `Your water order #${shortId} has been successfully delivered.`,
+                    time: "Just now"
+                  }
+                }))
+              } else if (newRecord?.status === 'processing') {
+                toast.info("Order Confirmed", {
+                  description: `Order #${shortId} is being prepared for delivery.`,
+                })
+              } else if (newRecord?.status === 'cancelled') {
+                toast.error("Order Cancelled", {
+                  description: `Order #${shortId} has been cancelled.`,
+                })
+              }
+            } else if (currentUserRole === 'admin' || currentUserRole === 'dispatcher') {
+              if (newRecord?.status === 'delivered') {
+                toast.success(`Order #${shortId} was delivered.`)
+              } else {
+                toast.info(`Order #${shortId} updated: ${newRecord?.status}`)
+              }
+            }
           }
           router.refresh()
         }
@@ -29,8 +92,11 @@ export function RealtimeProvider() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'deliveries' },
         (payload) => {
-          if (payload.eventType === 'UPDATE') {
-            toast.info(`Delivery status updated to: ${payload.new.status}`)
+          const newDelivery = payload.new as any
+          if (currentUserRole === 'rider' && newDelivery?.rider_id === currentUserId) {
+            if (payload.eventType === 'INSERT') {
+              toast.info("New delivery assigned to your route!")
+            }
           }
           router.refresh()
         }
@@ -38,8 +104,7 @@ export function RealtimeProvider() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'inventory' },
-        (payload) => {
-          // We can refresh silently for inventory changes to keep stock up to date
+        () => {
           router.refresh()
         }
       )
