@@ -120,20 +120,20 @@ export default async function RiderDashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Pending Stops */}
-        <div className="rounded-xl border border-border/80 bg-card p-5 shadow-xs transition-all duration-200 hover:border-border hover:shadow-sm">
+        <div className="rounded-xl border border-border/80 bg-card p-4 sm:p-5 shadow-xs transition-all duration-200 hover:border-border hover:shadow-sm">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pending Drops</p>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/15">
-              <Truck className="size-4" />
+            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pending Drops</p>
+            <div className="flex size-7 sm:size-8 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/15">
+              <Truck className="size-3.5 sm:size-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline justify-between">
-            <h3 className="text-3xl font-bold font-mono tabular-nums tracking-tight text-foreground">
+          <div className="mt-2.5 sm:mt-3 flex items-baseline justify-between">
+            <h3 className="text-2xl sm:text-3xl font-bold font-mono tabular-nums tracking-tight text-foreground">
               {pending.length}
             </h3>
-            <span className="text-xs text-muted-foreground">Remaining stops</span>
+            <span className="text-[11px] sm:text-xs text-muted-foreground">Remaining</span>
           </div>
         </div>
 
@@ -192,7 +192,7 @@ export default async function RiderDashboardPage() {
           ? 'border-blue-500/60 bg-card ring-2 ring-blue-500/20' 
           : 'border-border/80 bg-card'
       }`}>
-        <div className={`flex items-center justify-between border-b p-5 ${
+        <div className={`flex items-center justify-between border-b p-4 sm:p-5 ${
           nextDelivery?.status === 'in-transit' 
             ? 'border-blue-500/20 bg-blue-500/10' 
             : 'border-border/70 bg-muted/20'
@@ -238,7 +238,7 @@ export default async function RiderDashboardPage() {
           )}
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {nextDelivery ? (
             <div className="flex flex-col lg:flex-row items-start justify-between gap-6">
               <div className="flex items-start gap-4 flex-1">

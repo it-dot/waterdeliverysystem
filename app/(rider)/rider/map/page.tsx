@@ -38,7 +38,7 @@ export default async function RiderMapPage() {
   const riderLocation: [number, number] = [8.9475, 125.5406];
 
   return (
-    <div className="space-y-6 h-[calc(100vh-8rem)] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-4 sm:space-y-6 h-[calc(100dvh-10rem)] md:h-[calc(100vh-8rem)] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Route Map</h1>

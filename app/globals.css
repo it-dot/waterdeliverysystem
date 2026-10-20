@@ -153,3 +153,7 @@
 .tactile-btn {
   @apply transition-all duration-150 active:scale-[0.98];
 }
+
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.25rem);
+}

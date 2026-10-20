@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server"
 import { getAuthUser } from "@/lib/services/auth/auth.service"
 import { redirect } from "next/navigation"
 
+import { CustomerBottomNav } from "@/components/customer/customer-bottom-nav"
+
 export default async function CustomerLayout({
   children,
 }: {
@@ -36,13 +38,14 @@ export default async function CustomerLayout({
     <SidebarProvider>
       <div className="flex min-h-screen bg-transparent w-full">
         <CustomerSidebar />
-        <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col min-w-0">
           <CustomerHeader />
-          <main className="flex-1 p-6 md:p-8 overflow-y-auto">
-            <div className="mx-auto max-w-6xl">
+          <main className="flex-1 p-3.5 sm:p-5 md:p-8 pb-20 md:pb-8 overflow-y-auto">
+            <div className="mx-auto max-w-6xl w-full">
               {children}
             </div>
           </main>
+          <CustomerBottomNav />
         </div>
       </div>
     </SidebarProvider>

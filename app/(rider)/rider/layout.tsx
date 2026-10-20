@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: "Clearwell water delivery rider app",
 }
 
+import { RiderBottomNav } from "@/components/rider/rider-bottom-nav"
+
 export default async function RiderLayout({
   children,
 }: {
@@ -44,9 +46,12 @@ export default async function RiderLayout({
     <TooltipProvider>
       <SidebarProvider>
         <RiderSidebar />
-        <SidebarInset>
+        <SidebarInset className="min-w-0">
           <RiderHeader profile={profile} />
-          <div className="flex-1 overflow-auto p-4 md:p-6 bg-transparent">{children}</div>
+          <div className="flex-1 overflow-auto p-3.5 sm:p-4 md:p-6 pb-20 md:pb-6 bg-transparent w-full">
+            {children}
+          </div>
+          <RiderBottomNav />
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>

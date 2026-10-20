@@ -54,17 +54,73 @@ export async function addCustomer(formData: FormData) {
 export async function deleteCustomer(customerId: string) {
   const supabase = await createAdminClient()
 
-  // Delete the auth user, which will cascade delete the profile record
-  const { error } = await supabase.auth.admin.deleteUser(customerId)
+  try {
+    // 1. Fetch all orders for this customer
+    const { data: orders } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('customer_id', customerId)
 
-  if (error) {
-    console.error('Delete customer error:', error)
-    return { error: error.message }
+    const orderIds = (orders || []).map((o) => o.id)
+
+    if (orderIds.length > 0) {
+      // 2. Cascade delete dependent tables referencing these orders
+      await supabase.from('payments').delete().in('order_id', orderIds)
+      await supabase.from('invoices').delete().in('order_id', orderIds)
+      await supabase.from('deliveries').delete().in('order_id', orderIds)
+      await supabase.from('order_items').delete().in('order_id', orderIds)
+
+      // 3. Delete the orders
+      const { error: ordersErr } = await supabase
+        .from('orders')
+        .delete()
+        .eq('customer_id', customerId)
+
+      if (ordersErr) {
+        console.error('Error deleting customer orders:', ordersErr)
+        return { error: `Failed to remove orders: ${ordersErr.message}` }
+      }
+    }
+
+    // 4. Delete invoices directly linked to customer (if any order-less invoices exist)
+    await supabase.from('invoices').delete().eq('customer_id', customerId)
+
+    // 5. Delete schedules for this customer
+    await supabase.from('schedules').delete().eq('customer_id', customerId)
+
+    // 6. If this user was assigned as a rider anywhere, nullify rider_id
+    await supabase.from('deliveries').update({ rider_id: null }).eq('rider_id', customerId)
+
+    // 7. Delete profile record
+    const { error: profileErr } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('id', customerId)
+
+    if (profileErr) {
+      console.error('Error deleting profile:', profileErr)
+      return { error: `Failed to remove profile: ${profileErr.message}` }
+    }
+
+    // 8. Delete auth user
+    const { error: authErr } = await supabase.auth.admin.deleteUser(customerId)
+    if (authErr && !authErr.message.includes('User not found')) {
+      console.error('Delete auth user error:', authErr)
+      return { error: authErr.message }
+    }
+
+    revalidatePath('/admin/customers')
+    revalidatePath('/admin/dashboard')
+    revalidatePath('/admin/orders')
+    revalidatePath('/admin/invoices')
+    revalidatePath('/admin/schedules')
+    revalidatePath('/admin/deliveries')
+    return { success: true }
+  } catch (err: unknown) {
+    console.error('Unexpected error during customer deletion:', err)
+    const message = err instanceof Error ? err.message : 'Failed to delete customer'
+    return { error: message }
   }
-
-  revalidatePath('/admin/customers')
-  revalidatePath('/admin/dashboard')
-  return { success: true }
 }
 
 export async function toggleCustomerStatus(customerId: string, deactivate: boolean) {

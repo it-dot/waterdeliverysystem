@@ -72,50 +72,86 @@ export default async function CustomerInvoicesPage() {
              </p>
            </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border/60 bg-muted/30 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                  <th className="py-3 px-4">Invoice No.</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Due Date</th>
-                  <th className="py-3 px-4 text-right">Amount</th>
-                  <th className="py-3 px-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {invoices.map((invoice: any) => (
-                  <tr key={invoice.id} className="transition-colors hover:bg-muted/40">
-                    <td className="py-3.5 px-4">
-                      <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted/60 border border-border/60 text-foreground font-semibold inline-flex items-center gap-1.5">
-                        <FileText className="size-3 text-muted-foreground" />
-                        {invoice.invoice_number}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      {formatStatus(invoice.status)}
-                    </td>
-                    <td className="py-3.5 px-4 text-xs text-muted-foreground">
-                      {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'Upon Delivery'}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono font-medium tabular-nums text-right text-foreground">
+          <>
+            {/* Mobile Cards View (< md) */}
+            <div className="divide-y divide-border/60 md:hidden">
+              {invoices.map((invoice: any) => (
+                <div key={invoice.id} className="p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-xs px-2.5 py-0.5 rounded bg-muted/60 border border-border/60 text-foreground font-semibold inline-flex items-center gap-1.5">
+                      <FileText className="size-3 text-muted-foreground" />
+                      {invoice.invoice_number}
+                    </span>
+                    {formatStatus(invoice.status)}
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <span className="text-muted-foreground">
+                      Due: {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'Upon Delivery'}
+                    </span>
+                    <span className="font-mono font-bold text-base tabular-nums text-foreground">
                       ₱{invoice.total_amount.toFixed(2)}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex justify-end items-center gap-3">
-                        <DownloadReceiptButton invoice={invoice} />
-                        {invoice.status !== 'paid' && invoice.status !== 'cancelled' && (
-                           <button className="tactile-btn text-xs font-semibold text-primary hover:underline cursor-pointer">
-                             Pay Now
-                           </button>
-                        )}
-                      </div>
-                    </td>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-border/40">
+                    <DownloadReceiptButton invoice={invoice} />
+                    {invoice.status !== 'paid' && invoice.status !== 'cancelled' && (
+                      <button className="tactile-btn text-xs font-semibold text-primary hover:underline cursor-pointer px-2 py-1">
+                        Pay Now
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border/60 bg-muted/30 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    <th className="py-3 px-4">Invoice No.</th>
+                    <th className="py-3 px-4">Status</th>
+                    <th className="py-3 px-4">Due Date</th>
+                    <th className="py-3 px-4 text-right">Amount</th>
+                    <th className="py-3 px-4 text-right">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  {invoices.map((invoice: any) => (
+                    <tr key={invoice.id} className="transition-colors hover:bg-muted/40">
+                      <td className="py-3.5 px-4">
+                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted/60 border border-border/60 text-foreground font-semibold inline-flex items-center gap-1.5">
+                          <FileText className="size-3 text-muted-foreground" />
+                          {invoice.invoice_number}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        {formatStatus(invoice.status)}
+                      </td>
+                      <td className="py-3.5 px-4 text-xs text-muted-foreground">
+                        {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'Upon Delivery'}
+                      </td>
+                      <td className="py-3.5 px-4 font-mono font-medium tabular-nums text-right text-foreground">
+                        ₱{invoice.total_amount.toFixed(2)}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="flex justify-end items-center gap-3">
+                          <DownloadReceiptButton invoice={invoice} />
+                          {invoice.status !== 'paid' && invoice.status !== 'cancelled' && (
+                             <button className="tactile-btn text-xs font-semibold text-primary hover:underline cursor-pointer">
+                               Pay Now
+                             </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>
