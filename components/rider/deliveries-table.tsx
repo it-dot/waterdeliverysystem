@@ -113,10 +113,10 @@ export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
           return (
             <div
               key={delivery.id}
-              className={`rounded-xl border p-4 shadow-xs transition-all ${
+              className={`rounded-2xl border p-4 sm:p-5 shadow-xs transition-all ${
                 isInTransit
-                  ? 'border-blue-500/60 bg-blue-500/5 ring-1 ring-blue-500/20'
-                  : 'border-border/80 bg-card'
+                  ? 'border-blue-500/60 bg-blue-500/5 ring-2 ring-blue-500/25 shadow-md'
+                  : 'border-border/80 bg-card/95 backdrop-blur-md hover:border-border'
               }`}
             >
               <div className="flex items-start justify-between gap-3">
@@ -130,19 +130,19 @@ export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
                   />
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="font-semibold text-sm text-foreground">
+                      <h4 className="font-bold text-sm text-foreground">
                         {delivery.orders?.profiles?.full_name || 'Customer'}
                       </h4>
                       {isInTransit && (
-                        <span className="font-mono text-[9px] font-bold uppercase bg-blue-600 text-white px-1.5 py-0.5 rounded shadow-xs">
-                          Priority
+                        <span className="font-mono text-[9px] font-bold uppercase bg-blue-600 text-white px-2 py-0.5 rounded-full shadow-xs">
+                          In Transit
                         </span>
                       )}
                     </div>
                     {phone && (
                       <a
                         href={`tel:${phone}`}
-                        className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline mt-0.5"
+                        className="inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline mt-0.5"
                       >
                         <Phone className="size-3" /> {phone}
                       </a>
@@ -150,23 +150,23 @@ export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
                   </div>
                 </div>
 
-                <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium border shrink-0 ${statusConfig.pill}`}>
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold border shrink-0 ${statusConfig.pill}`}>
                   <span className={`size-1.5 rounded-full ${statusConfig.dot}`} />
                   {delivery.status.replace('-', ' ')}
                 </span>
               </div>
 
-              <div className="mt-3 flex items-start gap-1.5 text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border/50">
-                <MapPin className="size-3.5 text-primary shrink-0 mt-0.5" />
+              <div className="mt-3 flex items-start gap-1.5 text-xs text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50">
+                <MapPin className="size-3.5 text-blue-600 shrink-0 mt-0.5" />
                 <span className="line-clamp-2 leading-relaxed">{address}</span>
               </div>
 
-              <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between gap-2">
+              <div className="mt-3.5 pt-3 border-t border-border/60 flex items-center justify-between gap-2">
                 <div>
-                  <span className="font-mono text-sm font-bold tabular-nums text-foreground">
+                  <span className="font-mono text-base font-extrabold tabular-nums text-foreground">
                     ₱{delivery.orders?.total_amount?.toFixed(2) || '0.00'}
                   </span>
-                  <span className="block text-[10px] text-muted-foreground uppercase font-semibold">
+                  <span className="block text-[10px] text-muted-foreground uppercase font-bold">
                     {delivery.orders?.payment_method || 'COD'}
                   </span>
                 </div>
@@ -179,11 +179,11 @@ export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
       </div>
 
       {/* Desktop / Tablet Table View (Hidden on mobile < 768px) */}
-      <div className="hidden md:block rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden">
+      <div className="hidden md:block rounded-2xl border border-border/80 bg-card/95 backdrop-blur-md shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border/60 bg-muted/30 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+              <tr className="border-b border-border/70 bg-muted/30 text-left text-[11px] font-mono font-bold text-muted-foreground uppercase tracking-wider">
                 <th className="py-3 px-4 w-12">
                   <input
                     type="checkbox"

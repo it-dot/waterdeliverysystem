@@ -71,9 +71,9 @@ export function CustomerSidebar() {
                 <SidebarMenuButton
                   render={<Link href={item.href} />}
                   isActive={isActive}
-                  className={`transition-colors rounded-lg ${
+                  className={`transition-all rounded-xl ${
                     isActive
-                      ? "bg-primary/10 text-primary font-semibold dark:bg-primary/20"
+                      ? "bg-primary/10 text-primary font-bold dark:bg-primary/20 shadow-xs"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                   }`}
                 >

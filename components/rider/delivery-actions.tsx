@@ -26,21 +26,25 @@ export function DeliveryActions({ deliveryId, status, address }: { deliveryId: s
       toast.error(result.error)
     } else {
       const messages: Record<string, string> = {
-        'in-transit': 'Delivery started! Moved to top of queue.',
+        'in-transit': 'Delivery started! Opening route map...',
         'delivered': 'Delivery marked as completed!',
         'failed': 'Delivery marked as failed.',
       }
       toast.success(messages[newStatus])
-      router.refresh()
+      if (newStatus === 'in-transit') {
+        router.push(`/rider/map?deliveryId=${deliveryId}`)
+      } else {
+        router.refresh()
+      }
     }
   }
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex gap-2 flex-wrap items-center">
       {status === 'assigned' && (
         <Button
           size="sm"
-          className="gap-1.5 bg-blue-600 hover:bg-blue-700"
+          className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white shadow-xs font-semibold"
           onClick={() => handleStatusUpdate('in-transit')}
           disabled={loading !== null}
         >
@@ -50,11 +54,22 @@ export function DeliveryActions({ deliveryId, status, address }: { deliveryId: s
       )}
       {(status === 'assigned' || status === 'in-transit') && (
         <>
+          {status === 'in-transit' && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50 shadow-xs"
+              onClick={() => router.push(`/rider/map?deliveryId=${deliveryId}`)}
+            >
+              <Navigation className="size-3.5" />
+              Route Map
+            </Button>
+          )}
           {mapsUrl && (
             <Button
               size="sm"
               variant="outline"
-              className="gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50"
+              className="gap-1.5 text-emerald-600 border-emerald-200 hover:bg-emerald-50 shadow-xs"
               onClick={() => window.open(mapsUrl, '_blank')}
             >
               <MapPinned className="size-3.5" />

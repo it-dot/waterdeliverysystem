@@ -13,16 +13,42 @@ const DynamicMap = dynamic(() => import("./LeafletMap"), {
   ),
 });
 
+export type DeliveryMapLocation = {
+  id: string;
+  lat: number;
+  lng: number;
+  title: string;
+  customerName?: string;
+  phone?: string;
+  address?: string;
+  rawAddress?: string;
+  orderId?: string;
+  amount?: number;
+  paymentMethod?: string;
+  status?: string;
+  isActiveRoute?: boolean;
+};
+
 export function MapWrapper({
   locations,
   center,
   zoom,
   riderLocation,
+  activeDeliveryId,
 }: {
-  locations?: Array<{ id: string; lat: number; lng: number; title: string; isActiveRoute?: boolean }>;
+  locations?: DeliveryMapLocation[];
   center?: [number, number];
   zoom?: number;
   riderLocation?: [number, number];
+  activeDeliveryId?: string;
 }) {
-  return <DynamicMap locations={locations} center={center} zoom={zoom} riderLocation={riderLocation} />;
+  return (
+    <DynamicMap
+      locations={locations}
+      center={center}
+      zoom={zoom}
+      riderLocation={riderLocation}
+      activeDeliveryId={activeDeliveryId}
+    />
+  );
 }

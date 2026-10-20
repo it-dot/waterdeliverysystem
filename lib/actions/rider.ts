@@ -276,6 +276,7 @@ export async function markDeliveryStatus(deliveryId: string, status: 'in-transit
   revalidatePath('/rider/deliveries')
   revalidatePath('/rider/dashboard')
   revalidatePath('/rider/history')
+  revalidatePath('/rider/map')
   revalidatePath('/admin/deliveries')
   revalidatePath('/admin/orders')
   revalidatePath('/customer/dashboard')

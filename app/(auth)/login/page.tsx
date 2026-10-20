@@ -337,37 +337,31 @@ export default function LoginPage() {
                 </Button>
               </form>
 
-              {/* Quick Demo Assist / Internal Notice with Multi-Role Presets */}
-              <div className="mt-6 p-3 rounded-lg border border-dashed border-border bg-muted/40 text-xs space-y-2">
+              {/* Quick Demo Assist / Role Selector */}
+              <div className="mt-6 p-3.5 rounded-2xl border border-border/80 bg-muted/30 text-xs space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground font-medium">Demo Station Presets:</span>
-                  <button
-                    type="button"
-                    onClick={() => fillDemoCredentials('dispatcher')}
-                    className="text-xs font-semibold text-primary hover:underline cursor-pointer"
-                  >
-                    Auto-fill Dispatcher
-                  </button>
+                  <span className="text-muted-foreground font-mono text-[11px] font-bold uppercase tracking-wider">Demo Quick Access</span>
+                  <span className="text-[10px] font-mono text-primary font-semibold">1-Click Auth Fill</span>
                 </div>
-                <div className="flex items-center gap-1.5 pt-1">
+                <div className="grid grid-cols-3 gap-1.5 pt-0.5">
                   <button
                     type="button"
                     onClick={() => fillDemoCredentials('dispatcher')}
-                    className="px-2 py-1 rounded bg-background border border-border text-[11px] font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
+                    className="tactile-btn py-2 px-1 rounded-xl bg-background border border-border/80 text-[11px] font-bold text-foreground hover:border-primary/40 text-center shadow-xs"
                   >
-                    Dispatcher (Admin)
+                    Dispatcher
                   </button>
                   <button
                     type="button"
                     onClick={() => fillDemoCredentials('rider')}
-                    className="px-2 py-1 rounded bg-background border border-border text-[11px] font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
+                    className="tactile-btn py-2 px-1 rounded-xl bg-background border border-border/80 text-[11px] font-bold text-foreground hover:border-primary/40 text-center shadow-xs"
                   >
-                    Fleet Rider
+                    Courier Rider
                   </button>
                   <button
                     type="button"
                     onClick={() => fillDemoCredentials('customer')}
-                    className="px-2 py-1 rounded bg-background border border-border text-[11px] font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
+                    className="tactile-btn py-2 px-1 rounded-xl bg-background border border-border/80 text-[11px] font-bold text-foreground hover:border-primary/40 text-center shadow-xs"
                   >
                     Customer
                   </button>

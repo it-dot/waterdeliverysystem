@@ -109,18 +109,18 @@ export function OrdersTable({ orders, error }: { orders: Order[], error?: any })
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative flex-1 w-full max-w-sm">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search order ref, customer, or product..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-9 w-full rounded-lg border border-border/80 bg-background pl-9 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+            className="h-10 w-full rounded-xl border border-border/80 bg-background pl-10 pr-3 text-xs placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40 transition-shadow"
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <select 
-            className="h-9 rounded-lg border border-border/80 bg-background px-3 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
+            className="h-10 rounded-xl border border-border/80 bg-background px-3 text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -131,27 +131,27 @@ export function OrdersTable({ orders, error }: { orders: Order[], error?: any })
             <option value="delivered">Delivered</option>
             <option value="cancelled">Cancelled</option>
           </select>
-          <span className="text-xs text-muted-foreground whitespace-nowrap hidden sm:inline">
+          <span className="text-xs font-mono font-medium text-muted-foreground whitespace-nowrap hidden sm:inline px-2.5 py-1 rounded-lg bg-muted/40 border border-border/60">
             {filteredOrders.length} {filteredOrders.length === 1 ? 'order' : 'orders'}
           </span>
         </div>
       </div>
 
-      <div className="rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden">
+      <div className="rounded-2xl border border-border/80 bg-card/95 backdrop-blur-md shadow-xs overflow-hidden">
         {selectedIds.size > 0 && (
-          <div className="flex flex-wrap items-center gap-2 p-3 bg-muted/60 border-b border-border/70 text-xs">
-            <span className="font-semibold text-foreground px-2">{selectedIds.size} selected</span>
-            <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => handleBulkStatus('processing')} disabled={loading}>Mark Processing</Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => handleBulkStatus('in-transit')} disabled={loading}>Mark In Transit</Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => handleBulkStatus('delivered')} disabled={loading}>Mark Delivered</Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => handleBulkStatus('cancelled')} disabled={loading}>Mark Cancelled</Button>
-            <Button variant="destructive" size="sm" className="h-8 text-xs ml-auto" onClick={handleBulkDelete} disabled={loading}>Delete Selected</Button>
+          <div className="flex flex-wrap items-center gap-2 p-3 bg-primary/5 border-b border-primary/20 text-xs">
+            <span className="font-bold text-foreground px-2">{selectedIds.size} selected</span>
+            <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg" onClick={() => handleBulkStatus('processing')} disabled={loading}>Mark Processing</Button>
+            <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg" onClick={() => handleBulkStatus('in-transit')} disabled={loading}>Mark In Transit</Button>
+            <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg" onClick={() => handleBulkStatus('delivered')} disabled={loading}>Mark Delivered</Button>
+            <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg" onClick={() => handleBulkStatus('cancelled')} disabled={loading}>Mark Cancelled</Button>
+            <Button variant="destructive" size="sm" className="h-8 text-xs rounded-lg ml-auto" onClick={handleBulkDelete} disabled={loading}>Delete Selected</Button>
           </div>
         )}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border/60 bg-muted/30 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+              <tr className="border-b border-border/70 bg-muted/30 text-left text-[11px] font-mono font-bold text-muted-foreground uppercase tracking-wider">
                 <th className="py-3 px-4 w-[40px]">
                   <input 
                     type="checkbox" 

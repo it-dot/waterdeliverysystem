@@ -11,13 +11,13 @@ export async function POST(request: NextRequest) {
 
     // 2. Identify the related order/payment
     const eventType = body.data?.attributes?.type
-    
+
     if (eventType === 'payment.paid') {
       const paymentIntentId = body.data?.attributes?.data?.attributes?.payment_intent_id
-      
+
       if (paymentIntentId) {
         const supabase = await createAdminClient()
-        
+
         // Update payment status in Supabase
         const { data: payment } = await supabase
           .from('payments')
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
           .eq('external_reference', paymentIntentId)
           .select('order_id')
           .single()
-          
+
         if (payment?.order_id) {
           // Additionally update order status
           await supabase

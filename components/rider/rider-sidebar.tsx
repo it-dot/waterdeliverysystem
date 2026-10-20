@@ -125,9 +125,9 @@ export function RiderSidebar() {
                         isActive={isActive}
                         tooltip={item.title}
                         render={<Link href={item.href} />}
-                        className={`transition-colors ${
+                        className={`transition-all rounded-xl ${
                           isActive
-                            ? "bg-primary/10 text-primary font-semibold dark:bg-primary/20"
+                            ? "bg-primary/10 text-primary font-bold dark:bg-primary/20 shadow-xs"
                             : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                         }`}
                       >
