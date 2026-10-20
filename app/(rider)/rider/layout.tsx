@@ -27,9 +27,9 @@ export default async function RiderLayout({
   const supabase = await createClient()
 
   let profile = { full_name: 'Rider' }
-  
+
   const { data } = await supabase.from('profiles').select('full_name, role').eq('id', user.id).single()
-  
+
   if (data?.role !== 'rider') {
     if (data?.role === 'customer') redirect('/customer/dashboard')
     if (data?.role === 'admin') redirect('/admin/dashboard')

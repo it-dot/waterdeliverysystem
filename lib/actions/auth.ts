@@ -24,6 +24,7 @@ export async function login(formData: FormData) {
 
   // Fetch user role to determine redirect
   const { data: { user } } = await supabase.auth.getUser()
+  let redirectUrl = '/'
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
@@ -32,18 +33,30 @@ export async function login(formData: FormData) {
       .single()
 
     if (profile?.role === 'admin') {
-      redirect('/admin/dashboard')
+      redirectUrl = '/admin/dashboard'
     } else if (profile?.role === 'rider') {
-      redirect('/rider/dashboard')
+      redirectUrl = '/rider/dashboard'
     } else if (profile?.role === 'customer') {
-      redirect('/customer/dashboard')
-    } else {
-      // Default fallback if they are just a customer or have no specific dashboard yet
-      redirect('/')
+      redirectUrl = '/customer/dashboard'
     }
   }
 
-  redirect('/')
+  return { success: true, redirectUrl }
+}
+
+export async function resetPassword(email: string) {
+  if (!email) {
+    return { error: 'Email is required.' }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.resetPasswordForEmail(email)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  return { success: true }
 }
 
 export async function logout() {
