@@ -13,6 +13,7 @@ import {
 import { getRiderDashboardData } from "@/lib/actions/rider"
 import { DeliveryActions } from "@/components/rider/delivery-actions"
 import Link from "next/link"
+import Image from "next/image"
 
 export default async function RiderDashboardPage() {
   const { data } = await getRiderDashboardData()
@@ -54,6 +55,67 @@ export default async function RiderDashboardPage() {
             <Navigation className="size-3.5" />
             Open Route Map
           </Link>
+        </div>
+      </div>
+
+      {/* Fleet Courier Route Visual Banner */}
+      <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-card shadow-xs">
+        <div className="grid md:grid-cols-12 items-center">
+          <div className="p-5 sm:p-6 md:col-span-7 flex flex-col justify-between h-full space-y-4">
+            <div>
+              <div className="flex items-center gap-2">
+                {nextDelivery?.status === 'in-transit' ? (
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-blue-600 text-white px-2 py-0.5 rounded shadow-xs flex items-center gap-1.5">
+                    <span className="size-1.5 rounded-full bg-white animate-ping" />
+                    Active Mission En Route
+                  </span>
+                ) : (
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20">
+                    Sector 03 Metro Route
+                  </span>
+                )}
+                <span className="font-mono text-xs text-muted-foreground">Batch #04-AM</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mt-2">
+                {nextDelivery?.status === 'in-transit'
+                  ? `En Route to ${(nextDelivery as any).orders?.profiles?.full_name || 'Customer'}`
+                  : 'Neighborhood Water Courier Active'}
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-md leading-relaxed">
+                {nextDelivery?.status === 'in-transit'
+                  ? `Delivery in progress to ${(nextDelivery as any).orders?.delivery_address?.includes('|') ? (nextDelivery as any).orders.delivery_address.split('|')[1] : ((nextDelivery as any).orders?.delivery_address || 'customer destination')}. Collect empty jugs and payment on arrival.`
+                  : 'Carrier racks loaded with 19L sealed carboys. Collect empty jugs at each stop and verify cash or QR payment.'}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <Link
+                href="/rider/map"
+                className="tactile-btn inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-xs hover:bg-primary/90"
+              >
+                <Navigation className="size-3.5" />
+                <span>Turn-by-Turn GPS Map</span>
+              </Link>
+              <span className="font-mono text-xs text-muted-foreground">
+                99.4% On-time route record
+              </span>
+            </div>
+          </div>
+
+          <div className="relative aspect-[16/9] md:aspect-auto md:h-full md:col-span-5 min-h-[160px] overflow-hidden bg-muted border-t md:border-t-0 md:border-l border-border/70">
+            <Image
+              src="/images/rider_dashboard_banner.jpg"
+              alt="Clearwell courier motorcycle with water racks"
+              fill
+              sizes="(max-width: 768px) 100vw, 42vw"
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+            <div className="absolute bottom-2.5 right-3 text-[10px] font-mono text-white/90 bg-black/60 px-2 py-0.5 rounded backdrop-blur-xs">
+              Courier Unit #R-04
+            </div>
+          </div>
         </div>
       </div>
 
@@ -125,31 +187,53 @@ export default async function RiderDashboardPage() {
       </div>
 
       {/* Next Delivery Mission Card (High-Priority Courier Pattern) */}
-      <div className="rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden">
-        <div className="flex items-center justify-between border-b border-border/70 p-5 bg-muted/20">
+      <div className={`rounded-xl border shadow-xs overflow-hidden transition-all ${
+        nextDelivery?.status === 'in-transit' 
+          ? 'border-blue-500/60 bg-card ring-2 ring-blue-500/20' 
+          : 'border-border/80 bg-card'
+      }`}>
+        <div className={`flex items-center justify-between border-b p-5 ${
+          nextDelivery?.status === 'in-transit' 
+            ? 'border-blue-500/20 bg-blue-500/10' 
+            : 'border-border/70 bg-muted/20'
+        }`}>
           <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Navigation className="size-4" />
+            <div className={`flex size-8 items-center justify-center rounded-lg ${
+              nextDelivery?.status === 'in-transit' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-primary/10 text-primary'
+            }`}>
+              <Navigation className={`size-4 ${nextDelivery?.status === 'in-transit' ? 'animate-pulse' : ''}`} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold tracking-tight text-foreground">Immediate Priority Stop</h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/15 text-primary uppercase">
-                  Stop #1
+                <h3 className="text-sm font-bold tracking-tight text-foreground">
+                  {nextDelivery?.status === 'in-transit' ? 'Active In-Transit Delivery' : 'Immediate Priority Stop'}
+                </h3>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-xs ${
+                  nextDelivery?.status === 'in-transit'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-primary/15 text-primary'
+                }`}>
+                  {nextDelivery?.status === 'in-transit' ? 'Top of Queue' : 'Stop #1'}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Current active delivery destination</p>
+              <p className="text-xs text-muted-foreground">
+                {nextDelivery?.status === 'in-transit' 
+                  ? 'Delivery started · En route to customer doorstep' 
+                  : 'Current active delivery destination'}
+              </p>
             </div>
           </div>
 
           {nextDelivery && (
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
               nextDelivery.status === 'in-transit'
-                ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20'
+                ? 'bg-blue-600 text-white border-blue-700 shadow-xs'
                 : 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20'
             }`}>
-              <span className="size-1.5 rounded-full bg-current animate-pulse" />
-              {nextDelivery.status.replace('-', ' ').toUpperCase()}
+              <span className={`size-1.5 rounded-full ${nextDelivery.status === 'in-transit' ? 'bg-white animate-ping' : 'bg-current animate-pulse'}`} />
+              {nextDelivery.status === 'in-transit' ? 'EN ROUTE' : nextDelivery.status.replace('-', ' ').toUpperCase()}
             </span>
           )}
         </div>

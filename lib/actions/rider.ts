@@ -32,9 +32,23 @@ export const getRiderDashboardData = cache(async () => {
       .eq('rider_id', user.id)
   ])
 
+  // Always put 'in-transit' (started) deliveries at the very top of the queue
+  const sortedPending = (pendingRes.data || []).sort((a: any, b: any) => {
+    if (a.status === 'in-transit' && b.status !== 'in-transit') return -1
+    if (b.status === 'in-transit' && a.status !== 'in-transit') return 1
+    if (a.status === 'in-transit' && b.status === 'in-transit') {
+      const timeA = new Date(a.updated_at || a.created_at || 0).getTime()
+      const timeB = new Date(b.updated_at || b.created_at || 0).getTime()
+      return timeB - timeA
+    }
+    const dateA = a.scheduled_date ? new Date(a.scheduled_date).getTime() : (a.created_at ? new Date(a.created_at).getTime() : 0)
+    const dateB = b.scheduled_date ? new Date(b.scheduled_date).getTime() : (b.created_at ? new Date(b.created_at).getTime() : 0)
+    return dateA - dateB
+  })
+
   return {
     data: {
-      pending: pendingRes.data || [],
+      pending: sortedPending,
       completedCount: completedCountRes.count || 0
     },
     error: pendingRes.error?.message || null
@@ -55,7 +69,7 @@ export async function getRiderDeliveries(riderId?: string) {
     return { data: [], error: null }
   }
 
-  let query = adminClient
+  const query = adminClient
     .from('deliveries')
     .select('*, orders(id, delivery_address, total_amount, payment_method, profiles(full_name, phone), order_items(products(name)))')
     .in('status', ['assigned', 'in-transit'])
@@ -69,7 +83,21 @@ export async function getRiderDeliveries(riderId?: string) {
     return { data: null, error: error.message }
   }
 
-  return { data, error: null }
+  // Always put 'in-transit' (started) deliveries at the very top of the queue
+  const sortedData = (data || []).sort((a: any, b: any) => {
+    if (a.status === 'in-transit' && b.status !== 'in-transit') return -1
+    if (b.status === 'in-transit' && a.status !== 'in-transit') return 1
+    if (a.status === 'in-transit' && b.status === 'in-transit') {
+      const timeA = new Date(a.updated_at || a.created_at || 0).getTime()
+      const timeB = new Date(b.updated_at || b.created_at || 0).getTime()
+      return timeB - timeA
+    }
+    const dateA = a.scheduled_date ? new Date(a.scheduled_date).getTime() : (a.created_at ? new Date(a.created_at).getTime() : 0)
+    const dateB = b.scheduled_date ? new Date(b.scheduled_date).getTime() : (b.created_at ? new Date(b.created_at).getTime() : 0)
+    return dateA - dateB
+  })
+
+  return { data: sortedData, error: null }
 }
 
 export async function getRiderCompletedDeliveries(riderId?: string) {
@@ -107,7 +135,10 @@ export async function getRiderCompletedDeliveries(riderId?: string) {
 export async function markDeliveryStatus(deliveryId: string, status: 'in-transit' | 'delivered' | 'failed') {
   const supabase = await createAdminClient()
 
-  const updateData: Record<string, unknown> = { status }
+  const updateData: Record<string, unknown> = { 
+    status,
+    updated_at: new Date().toISOString()
+  }
   if (status === 'delivered' || status === 'failed') {
     updateData.completed_at = new Date().toISOString()
   }

@@ -15,6 +15,7 @@ import { getRecentOrders, getDashboardStats } from "@/lib/services/orders/orders
 import { PeriodPerformanceCard } from "@/components/admin/period-performance-card"
 import { CreateOrderDialog } from "@/components/admin/create-order-dialog"
 import Link from "next/link"
+import Image from "next/image"
 
 function StatCard({
   title,
@@ -260,6 +261,44 @@ export default async function DashboardPage() {
 
         {/* Right Column: Interactive Performance Hub & Inventory Alerts */}
         <div className="space-y-6 lg:col-span-3">
+          {/* Station Bottling & Inventory Hub Visual Card */}
+          <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs group">
+            <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
+              <Image
+                src="/images/admin_dashboard_banner.jpg"
+                alt="Clearwell centralized water purification and pallet inventory warehouse"
+                fill
+                sizes="(max-width: 1024px) 100vw, 33vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3 text-white">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-black/60 px-2 py-0.5 rounded text-white/90 backdrop-blur-xs">
+                    Station 01 Fulfillment Hub
+                  </span>
+                </div>
+                <h3 className="text-sm font-bold text-white leading-tight drop-shadow-xs">
+                  Automated Bottling & Pallet Staging
+                </h3>
+                <p className="text-[11px] text-white/80 line-clamp-1 mt-0.5 font-mono">
+                  All 19L carboy racks stocked · Active route departures
+                </p>
+              </div>
+            </div>
+            <div className="p-3 bg-card border-t border-border/60 flex items-center justify-between text-xs">
+              <span className="font-mono text-[11px] text-muted-foreground">Pallet Rows A–D Active</span>
+              <Link
+                href="/admin/inventory"
+                className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+              >
+                <span>Manage Stock</span>
+                <ExternalLink className="size-3" />
+              </Link>
+            </div>
+          </div>
+
           {/* Interactive Period Performance Card */}
           <PeriodPerformanceCard summaries={stats.summaries} />
 

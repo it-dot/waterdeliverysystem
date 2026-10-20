@@ -19,6 +19,7 @@ import {
 import { getCustomerDashboardStats } from "@/lib/actions/customer"
 import { CustomerCreateOrderDialog } from "@/components/customer/customer-create-order-dialog"
 import Link from "next/link"
+import Image from "next/image"
 
 export default async function CustomerDashboardPage() {
   const { data, error } = await getCustomerDashboardStats()
@@ -28,7 +29,7 @@ export default async function CustomerDashboardPage() {
   const pendingInvoices = data?.pendingInvoices || []
 
   const activeCount = activeOrders.filter((o: any) => o.status !== 'delivered' && o.status !== 'cancelled').length
-  const nextOrder = activeOrders[0]
+  const nextOrder = activeOrders.find((o: any) => o.status !== 'delivered' && o.status !== 'cancelled')
 
   // Extract assigned rider/delivery info if available
   const delivery = Array.isArray((nextOrder as any)?.deliveries) 
@@ -143,7 +144,9 @@ export default async function CustomerDashboardPage() {
               </div>
               <div>
                 <h2 className="text-sm font-semibold tracking-tight text-foreground">Live Delivery Status</h2>
-                <p className="text-xs text-muted-foreground">Track your most recent water order</p>
+                <p className="text-xs text-muted-foreground">
+                  {nextOrder ? "Track your most recent water order" : "No ongoing deliveries"}
+                </p>
               </div>
             </div>
 
@@ -297,21 +300,35 @@ export default async function CustomerDashboardPage() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-center">
-                <div className="size-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
-                  <Droplets className="size-6" />
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <div className="relative size-20 rounded-2xl overflow-hidden border border-border/80 shadow-xs mb-3 bg-muted">
+                  <Image
+                    src="/images/customer_dashboard_banner.jpg"
+                    alt="Pristine water refill container"
+                    fill
+                    sizes="80px"
+                    loading="eager"
+                    className="object-cover"
+                  />
                 </div>
-                <h4 className="font-semibold text-base text-foreground">No active deliveries</h4>
+                <h4 className="font-semibold text-base text-foreground">No active orders</h4>
                 <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-                  Your hydration supply is up to date. Place an order whenever you need a refill.
+                  Your hydration supply is up to date. Place an order whenever you need a doorstep bottle swap.
                 </p>
-                <div className="mt-5">
+                <div className="mt-4 flex flex-col sm:flex-row items-center gap-3">
                   <CustomerCreateOrderDialog trigger={
                     <button className="tactile-btn inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-xs hover:bg-primary/90 cursor-pointer">
                       <Plus className="size-3.5" />
                       Place New Order
                     </button>
                   } />
+                  <Link 
+                    href="/customer/orders" 
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <span>View past orders</span>
+                    <ArrowRight className="size-3" />
+                  </Link>
                 </div>
               </div>
             )}
@@ -320,6 +337,41 @@ export default async function CustomerDashboardPage() {
 
         {/* Quick Actions Panel (Tactile UIverse / Mobbin cards) */}
         <div className="space-y-4 lg:col-span-3">
+          {/* Featured Visual Hydration Banner */}
+          <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs group">
+            <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
+              <Image
+                src="/images/customer_dashboard_banner.jpg"
+                alt="Clearwell purified water dispenser setup"
+                fill
+                sizes="(max-width: 1024px) 100vw, 33vw"
+                loading="eager"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3 text-white">
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-wider bg-primary/90 text-primary-foreground px-2 py-0.5 rounded shadow-xs">
+                  Automated Refills
+                </span>
+                <h3 className="text-sm font-bold mt-1 text-white leading-tight drop-shadow-xs">
+                  Scheduled Hydration Plan
+                </h3>
+                <p className="text-[11px] text-white/85 line-clamp-1 mt-0.5">
+                  Set recurring delivery days and never run dry.
+                </p>
+              </div>
+            </div>
+            <div className="p-3 bg-card border-t border-border/60 flex items-center justify-between text-xs">
+              <span className="font-mono text-[11px] text-muted-foreground">Doorstep Swap Ready</span>
+              <CustomerCreateOrderDialog trigger={
+                <button className="inline-flex items-center gap-1 font-semibold text-primary hover:underline cursor-pointer">
+                  <span>Order Refill</span>
+                  <ArrowRight className="size-3" />
+                </button>
+              } />
+            </div>
+          </div>
+
           <div className="rounded-xl border border-border/80 bg-card p-5 shadow-xs">
             <h2 className="text-sm font-semibold tracking-tight text-foreground mb-1">Quick Actions</h2>
             <p className="text-xs text-muted-foreground mb-4">Fast shortcuts for your hydration service</p>

@@ -5,10 +5,14 @@ import { DeliveryActions } from './delivery-actions'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { bulkMarkDeliveryStatus } from '@/lib/actions/rider'
+import Link from 'next/link'
+import { Navigation, ArrowRight } from 'lucide-react'
 
 export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+
+  const activeDelivery = deliveries.find(d => d.status.toLowerCase() === 'in-transit')
 
   const toggleSelectAll = () => {
     if (selectedIds.length === deliveries.length) {
@@ -44,6 +48,37 @@ export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
 
   return (
     <div className="space-y-4">
+      {/* Active in-transit top banner */}
+      {activeDelivery && (
+        <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-in fade-in duration-300">
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-blue-600 text-white shadow-xs shrink-0">
+              <Navigation className="size-4 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-blue-600 text-white px-2 py-0.5 rounded shadow-xs">
+                  Active En Route · Top of Queue
+                </span>
+                <span className="text-xs font-bold text-foreground">
+                  {activeDelivery.orders?.profiles?.full_name || 'Customer'}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                {activeDelivery.orders?.delivery_address?.includes('|') ? activeDelivery.orders.delivery_address.split('|')[1] : activeDelivery.orders?.delivery_address}
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/rider/dashboard"
+            className="tactile-btn inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-all shrink-0 self-start sm:self-center"
+          >
+            <span>View on Dashboard</span>
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
+      )}
+
       {selectedIds.length > 0 && (
         <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg border">
           <span className="text-sm font-medium px-2">{selectedIds.length} selected</span>
@@ -77,6 +112,7 @@ export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
             <tbody className="divide-y divide-border/60 text-sm">
               {deliveries.map((delivery) => {
                 const status = delivery.status.toLowerCase()
+                const isInTransit = status === 'in-transit'
                 const statusConfig = 
                   status === 'delivered' ? { dot: 'bg-emerald-500', pill: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' } :
                   status === 'in-transit' ? { dot: 'bg-blue-500', pill: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20' } :
@@ -84,7 +120,10 @@ export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
                   { dot: 'bg-red-500', pill: 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20' }
 
                 return (
-                  <tr key={delivery.id} className="transition-colors hover:bg-muted/40">
+                  <tr 
+                    key={delivery.id} 
+                    className={isInTransit ? "bg-blue-500/8 border-l-4 border-l-blue-600 transition-colors dark:bg-blue-500/15" : "transition-colors hover:bg-muted/40"}
+                  >
                     <td className="py-3.5 px-4">
                       <input
                         type="checkbox"
@@ -95,7 +134,14 @@ export function RiderDeliveriesTable({ deliveries }: { deliveries: any[] }) {
                       />
                     </td>
                     <td className="py-3.5 px-4 font-medium text-foreground">
-                      {delivery.orders?.profiles?.full_name || 'Customer'}
+                      <div className="flex items-center gap-2">
+                        <span>{delivery.orders?.profiles?.full_name || 'Customer'}</span>
+                        {isInTransit && (
+                          <span className="font-mono text-[10px] font-bold uppercase bg-blue-600 text-white px-1.5 py-0.5 rounded shadow-xs">
+                            Top Priority
+                          </span>
+                        )}
+                      </div>
                       {delivery.orders?.profiles?.phone && (
                         <span className="block text-xs text-muted-foreground font-normal mt-0.5">
                           {delivery.orders.profiles.phone}

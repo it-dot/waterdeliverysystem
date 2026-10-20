@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { markDeliveryStatus } from '@/lib/actions/rider'
 import { toast } from 'sonner'
 import { Navigation, CheckCircle, XCircle, Loader2, MapPinned } from 'lucide-react'
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button'
 
 export function DeliveryActions({ deliveryId, status, address }: { deliveryId: string; status: string; address?: string }) {
   const [loading, setLoading] = useState<string | null>(null)
+  const router = useRouter()
 
   let mapsUrl = ""
   if (address && address.includes('|')) {
@@ -24,11 +26,12 @@ export function DeliveryActions({ deliveryId, status, address }: { deliveryId: s
       toast.error(result.error)
     } else {
       const messages: Record<string, string> = {
-        'in-transit': 'You are now en route!',
+        'in-transit': 'Delivery started! Moved to top of queue.',
         'delivered': 'Delivery marked as completed!',
         'failed': 'Delivery marked as failed.',
       }
       toast.success(messages[newStatus])
+      router.refresh()
     }
   }
 
