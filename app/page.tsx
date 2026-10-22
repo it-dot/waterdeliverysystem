@@ -6,173 +6,168 @@ import {
   Droplets,
   ArrowRight,
   Check,
-  Plus,
-  Minus,
   MapPin,
   Bike,
   Building2,
   UserCheck,
-  Search,
   CheckCircle2,
-  Calendar,
-  AlertCircle,
-  ShieldCheck,
-  Sparkles,
-  Truck,
-  Gauge,
   Clock,
-  ChevronRight,
+  ChevronDown,
   Activity,
   Layers,
   Award,
+  ShieldCheck,
+  Sparkles,
+  Truck,
+  RotateCcw,
+  Zap,
+  Phone,
+  HelpCircle,
+  ExternalLink,
+  ChevronRight,
 } from "lucide-react";
-import { toast } from "sonner";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-interface Product {
-  id: string;
+interface ProductSpec {
   name: string;
-  desc: string;
-  price: number;
-  requiresSwap: boolean;
-  unit: string;
-  badge?: string;
+  type: string;
+  refillPrice: number;
+  newPrice: number;
+  specs: string;
+  bestFor: string;
 }
 
-const PRODUCTS: Product[] = [
+const PRODUCTS: ProductSpec[] = [
   {
-    id: "slim-refill",
-    name: "19L Slim Jug Refill",
-    desc: "Swap your empty slim carboy with molded handle. Freshly sanitized & sealed.",
-    price: 50,
-    requiresSwap: true,
-    unit: "jug",
-    badge: "Most Popular",
+    name: "19L Slim Gallon Carboy",
+    type: "Polycarbonate Slim with Handle",
+    refillPrice: 50,
+    newPrice: 250,
+    specs: "BPA-free food grade, molded side handle, standard neck",
+    bestFor: "Easy manual pouring, apartments, and compact kitchens",
   },
   {
-    id: "round-refill",
-    name: "19L Round Dispenser Refill",
-    desc: "Standard round carboy for top-load & bottom-load water dispensers.",
-    price: 50,
-    requiresSwap: true,
-    unit: "jug",
+    name: "19L Round Dispenser Carboy",
+    type: "Standard Round Barrel",
+    refillPrice: 50,
+    newPrice: 250,
+    specs: "Universal top & bottom-load dispenser compatible",
+    bestFor: "Hot/Cold water dispensers in homes and offices",
   },
   {
-    id: "new-jug",
-    name: "19L Brand New Jug + Water",
-    desc: "First-time order or extra container. Certified BPA-free food grade bottle.",
-    price: 250,
-    requiresSwap: false,
-    unit: "jug",
-    badge: "No Empty Needed",
+    name: "500 mL Bottled Case (24 pcs)",
+    type: "Single-Use Sealed PET",
+    refillPrice: 180,
+    newPrice: 180,
+    specs: "Shrink-wrapped carton, tamper-proof screw caps",
+    bestFor: "Meetings, travel, family gatherings, and hospitality",
   },
   {
-    id: "case-500",
-    name: "500 mL Bottled Case (24s)",
-    desc: "Sealed single-use bottles for conferences, events, and family travel.",
-    price: 180,
-    requiresSwap: false,
-    unit: "case",
-  },
-  {
-    id: "case-1000",
-    name: "1 L Bottled Case (12s)",
-    desc: "Convenient liter bottles for family dining tables and active sports.",
-    price: 160,
-    requiresSwap: false,
-    unit: "case",
+    name: "1 L Bottled Case (12 pcs)",
+    type: "Single-Use Sealed PET",
+    refillPrice: 160,
+    newPrice: 160,
+    specs: "Family table size, ergonomic grip bottles",
+    bestFor: "Dining tables, sports events, and daily hydration",
   },
 ];
 
-const SLOTS = [
-  { id: "s1", time: "07:00 – 10:00", label: "Morning Route", eta: "Departs 7:15 AM" },
-  { id: "s2", time: "10:00 – 13:00", label: "Midday Route", eta: "Fastest Dispatch" },
-  { id: "s3", time: "13:00 – 16:00", label: "Afternoon Route", eta: "Departs 1:15 PM" },
-  { id: "s4", time: "16:00 – 19:00", label: "Evening Route", eta: "Last Order 6 PM" },
+const SCHEDULE_WINDOWS = [
+  {
+    id: "morning",
+    time: "07:00 – 10:00",
+    name: "Morning Route",
+    cutoff: "Order by 6:30 AM",
+    description: "First dispatch of the day. Ideal for homes and breakfast prep.",
+  },
+  {
+    id: "midday",
+    time: "10:00 – 13:00",
+    name: "Midday Route",
+    cutoff: "Order by 9:30 AM",
+    description: "Peak morning replenishment for offices, stores, and active households.",
+  },
+  {
+    id: "afternoon",
+    time: "13:00 – 16:00",
+    name: "Afternoon Route",
+    cutoff: "Order by 12:30 PM",
+    description: "Afternoon reloads before school and workplace closing hours.",
+  },
+  {
+    id: "evening",
+    time: "16:00 – 19:00",
+    name: "Evening Route",
+    cutoff: "Order by 5:30 PM",
+    description: "Final evening delivery sweep. Fresh water ready for the night.",
+  },
 ];
 
-const COVERAGE_LIST = [
-  { name: "Poblacion & Downtown Core", eta: "15–25 min", status: "Active Hub" },
-  { name: "San Jose & West Residential", eta: "20–30 min", status: "Active Hub" },
-  { name: "Heights & North Hills", eta: "25–35 min", status: "Active Hub" },
-  { name: "South Harbor & Coastal Road", eta: "30–40 min", status: "Active Hub" },
-  { name: "East Commercial & University Belt", eta: "20–30 min", status: "Active Hub" },
+const SYSTEM_WORKFLOW = [
+  {
+    step: "01",
+    title: "Customer Order & Scheduling",
+    actor: "Customer Portal",
+    desc: "Households or businesses choose their container type (19L slim or round carboys), select quantities, choose an arrival window, and confirm empty bottles ready for swap.",
+  },
+  {
+    step: "02",
+    title: "Station Batching & Route Optimization",
+    actor: "Station Admin Console",
+    desc: "Station dispatchers group pending orders into geographically optimized routes. The system validates inventory balances and assigns stops to on-duty delivery couriers.",
+  },
+  {
+    step: "03",
+    title: "Turn-by-Turn Mobile Dispatch",
+    actor: "Rider Mobile App",
+    desc: "Couriers view their route manifest with live turn-by-turn navigation, customer phone dialers, bottle quantity tags, and payment collection instructions.",
+  },
+  {
+    step: "04",
+    title: "Gate Exchange & Instant Settlement",
+    actor: "Doorstep Fulfillment",
+    desc: "The rider delivers sealed, sanitized containers, inspects and retrieves empty carboys, and marks the drop fulfilled via Cash on Delivery or digital payment scan.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "How does the empty carboy exchange work?",
+    a: "When ordering a ₱50 refill, have an equivalent number of standard 19-liter empty containers ready at your gate. Our courier will inspect the bottles for structural cleanliness and swap them for freshly sanitized, hermetically sealed refills. If you don't have empties, you can purchase brand-new containers for ₱250.",
+  },
+  {
+    q: "How are delivery fees calculated?",
+    a: "Delivery is 100% FREE for orders of 4 or more 19L carboys. For smaller orders of 1 to 3 bottles, a flat ₱20 courier trip fee applies regardless of distance within our municipal delivery sectors.",
+  },
+  {
+    q: "What payment methods are supported?",
+    a: "We support Cash on Delivery (COD) paid directly to your assigned courier upon arrival, as well as digital payments via GCash, Maya, and credit/debit cards processed securely through PayMongo.",
+  },
+  {
+    q: "How is the drinking water purified and tested?",
+    a: "Every drop undergoes our certified 5-stage purification sequence: sediment and active carbon filtration, water softening, high-pressure 0.0001-micron Reverse Osmosis (RO), UV sterilization, and ozone treatment. Total Dissolved Solids (TDS) are maintained below 10 ppm, conforming to national drinking water standards.",
+  },
+  {
+    q: "Can businesses and corporate offices set up automated recurring deliveries?",
+    a: "Yes. Corporate accounts can configure recurring weekly refill schedules (e.g. every Monday and Thursday morning) and receive consolidated monthly digital invoices through our Customer Portal.",
+  },
 ];
 
 export default function Home() {
-  const [selectedId, setSelectedId] = useState<string>("slim-refill");
-  const [qty, setQty] = useState<number>(3);
-  const [swapConfirmed, setSwapConfirmed] = useState<boolean>(true);
-  const [slotId, setSlotId] = useState<string>("s2");
-  const [name, setName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "gcash">("cash");
-  const [searchStreet, setSearchStreet] = useState<string>("");
-  const [searchResult, setSearchResult] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submittedOrder, setSubmittedOrder] = useState<any | null>(null);
-
-  const product = PRODUCTS.find((p) => p.id === selectedId) || PRODUCTS[0];
-  const isFreeDelivery = qty >= 4;
-  const deliveryFee = isFreeDelivery ? 0 : 20;
-  const subtotal = product.price * qty;
-  const total = subtotal + deliveryFee;
-  const activeSlot = SLOTS.find((s) => s.id === slotId) || SLOTS[1];
-
-  const format = (n: number) => `₱${n.toFixed(2)}`;
-
-  const handleStreetCheck = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchStreet.trim()) {
-      setSearchResult(null);
-      return;
-    }
-    const term = searchStreet.trim().toLowerCase();
-    const match = COVERAGE_LIST.find((c) => c.name.toLowerCase().includes(term));
-    if (match) {
-      setSearchResult(`✓ Verified Hub: ${match.name} is in direct dispatch range (${match.eta} avg turnaround).`);
-    } else {
-      setSearchResult(`✓ In Service Range: Daily scheduled route services "${searchStreet}" every 3 hours.`);
-    }
-  };
-
-  const handleOrderSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !phone.trim() || !address.trim()) {
-      toast.error("Please enter your name, mobile phone number, and delivery address.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmittedOrder({
-        orderNumber: `CW-${Math.floor(10000 + Math.random() * 90000)}`,
-        product: product.name,
-        qty,
-        slot: activeSlot.time,
-        total,
-        name,
-        phone,
-        address,
-        paymentMethod,
-        empties: product.requiresSwap ? (swapConfirmed ? `${qty} empty jugs ready for exchange` : "No empties") : "None required",
-      });
-      toast.success("Water refill request confirmed! Courier notified.");
-    }, 600);
-  };
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activeTab, setActiveTab] = useState<"customer" | "rider" | "admin">("customer");
 
   return (
     <div className="relative min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
-      {/* Ambient background water illumination (Linear/Stripe style) */}
+      {/* Ambient background water illumination */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-sky-400/15 via-blue-600/5 to-transparent blur-3xl opacity-70" />
-        <div className="absolute top-[40%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/10 blur-[120px] rounded-full" />
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-sky-400/15 via-blue-600/5 to-transparent blur-3xl opacity-75" />
+        <div className="absolute top-[35%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/10 blur-[120px] rounded-full" />
+        <div className="absolute top-[65%] left-[-10%] w-[500px] h-[500px] bg-blue-500/8 blur-[120px] rounded-full" />
       </div>
 
       {/* 1. Frosted Navigation Header */}
-      <header className="sticky top-0 z-50 border-b border-border/80 bg-background/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-border/80 bg-background/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
             <Link href="/" className="group flex items-center gap-2.5">
@@ -183,718 +178,728 @@ export default function Home() {
                 <span className="font-extrabold text-lg tracking-tight text-foreground leading-none">
                   Clearwell
                 </span>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mt-0.5">
-                  Pure Water Logistics
+                <span className="text-[11px] font-medium text-muted-foreground mt-0.5">
+                  Water Delivery System
                 </span>
               </div>
             </Link>
 
-            <span className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/40 px-3 py-1 font-mono text-[11px] text-muted-foreground">
-              <span className="relative flex size-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
-              </span>
-              <span>Hub 01 Operational • Active Routes</span>
+            <span className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
+              <span className="size-2 rounded-full bg-emerald-500" />
+              <span>Station Active • Delivering Today</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Quick Portal Switchers */}
-            <div className="hidden lg:flex items-center gap-1 border-r border-border/60 pr-3 mr-1 text-xs text-muted-foreground font-medium">
-              <Link href="/customer/dashboard" className="px-2.5 py-1.5 rounded-lg hover:text-foreground hover:bg-muted/60 transition-colors">
-                Customer Portal
-              </Link>
-              <Link href="/rider/dashboard" className="px-2.5 py-1.5 rounded-lg hover:text-foreground hover:bg-muted/60 transition-colors">
-                Courier App
-              </Link>
-              <Link href="/admin/dashboard" className="px-2.5 py-1.5 rounded-lg hover:text-foreground hover:bg-muted/60 transition-colors">
-                Station Admin
-              </Link>
-            </div>
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-muted-foreground">
+            <a href="#how-it-works" className="hover:text-foreground transition-colors">
+              How It Works
+            </a>
+            <a href="#apps" className="hover:text-foreground transition-colors">
+              The System Apps
+            </a>
+            <a href="#purification" className="hover:text-foreground transition-colors">
+              Water Quality
+            </a>
+            <a href="#pricing" className="hover:text-foreground transition-colors">
+              Rates & Products
+            </a>
+            <a href="#faq" className="hover:text-foreground transition-colors">
+              FAQ
+            </a>
+          </nav>
 
+          <div className="flex items-center gap-2.5">
             <ThemeToggle />
 
             <Link
               href="/login"
-              className="tactile-btn inline-flex items-center justify-center rounded-xl border border-border/80 bg-card px-3.5 py-2 text-xs font-semibold text-foreground shadow-xs hover:bg-muted"
-            >
-              Sign In
-            </Link>
-
-            <a
-              href="#refill-engine"
               className="tactile-btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm shadow-primary/25 hover:bg-primary/90"
             >
-              <span>Instant Refill</span>
+              <span>Access System</span>
               <ArrowRight className="size-3.5" />
-            </a>
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* 2. Hero + Order Engine Split Stage */}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-14 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
+      {/* 2. Main Hero Section */}
+      <section className="relative overflow-hidden py-16 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           
-          {/* Left Column: Premium Value Proposition & Guarantees */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 dark:bg-blue-500/20 px-3.5 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 border border-blue-500/20">
-                <Sparkles className="size-3.5 text-blue-600 dark:text-blue-400" />
-                <span>Next-Generation Water Refill & Exchange</span>
-              </div>
-
-              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground leading-[1.08]">
-                Pure drinking water, <br className="hidden sm:inline" />
-                <span className="text-gradient-primary">swapped at your gate.</span>
-              </h1>
-
-              <p className="text-base text-muted-foreground leading-relaxed">
-                Premium 19-liter drinking water delivered directly to your doorstep in 3-hour windows. Leave empty carboys out; our trained couriers sanitize and swap them seamlessly.
-              </p>
-            </div>
-
-            {/* Quality Standard Badges (Linear-style metrics) */}
-            <div className="grid grid-cols-3 gap-3 pt-2">
-              <div className="p-3.5 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-sm text-center">
-                <div className="text-xl font-extrabold font-mono text-primary">0.0001μ</div>
-                <div className="text-[11px] text-muted-foreground mt-0.5 font-medium leading-tight">Reverse Osmosis</div>
-              </div>
-              <div className="p-3.5 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-sm text-center">
-                <div className="text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">&lt; 10 ppm</div>
-                <div className="text-[11px] text-muted-foreground mt-0.5 font-medium leading-tight">Certified Purity</div>
-              </div>
-              <div className="p-3.5 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-sm text-center">
-                <div className="text-xl font-extrabold font-mono text-foreground">30 min</div>
-                <div className="text-[11px] text-muted-foreground mt-0.5 font-medium leading-tight">Avg Dispatch</div>
-              </div>
-            </div>
-
-            {/* 3 Step Protocol Cards */}
-            <div className="rounded-2xl border border-border/80 bg-card/80 p-5 backdrop-blur-sm shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-border/60 pb-3">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
-                  The Clearwell Protocol
-                </span>
-                <span className="text-[11px] font-mono text-primary font-semibold">Zero-Contact Option</span>
-              </div>
-
-              <div className="space-y-3.5 text-xs">
-                <div className="flex items-start gap-3">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-mono font-bold text-primary text-[11px]">
-                    01
-                  </span>
-                  <div>
-                    <h3 className="font-bold text-foreground text-sm">Choose Your Jug Type & Amount</h3>
-                    <p className="text-muted-foreground mt-0.5 leading-relaxed">
-                      ₱50 for standard 19L slim or round carboy refill with empty swap. New containers are ₱250.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-mono font-bold text-primary text-[11px]">
-                    02
-                  </span>
-                  <div>
-                    <h3 className="font-bold text-foreground text-sm">Free Delivery on 4+ Jugs</h3>
-                    <p className="text-muted-foreground mt-0.5 leading-relaxed">
-                      Flat ₱20 per drop. Delivery fee is <strong>100% waived</strong> when ordering 4 or more containers.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-mono font-bold text-primary text-[11px]">
-                    03
-                  </span>
-                  <div>
-                    <h3 className="font-bold text-foreground text-sm">Doorstep Exchange & Settlement</h3>
-                    <p className="text-muted-foreground mt-0.5 leading-relaxed">
-                      Our uniformed courier arrives with factory-sealed bottles and collects your empties. Pay in cash or scan GCash QR.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Coverage Radius Checker */}
-            <div className="rounded-2xl border border-border/80 bg-card/80 p-4 backdrop-blur-sm shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <MapPin className="size-3.5 text-blue-600" />
-                  Service Radius Check
-                </span>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase">Real-Time Routing</span>
-              </div>
-
-              <form onSubmit={handleStreetCheck} className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={searchStreet}
-                    onChange={(e) => setSearchStreet(e.target.value)}
-                    placeholder="Enter subdivision, street, or landmark..."
-                    className="w-full rounded-xl border border-border/80 bg-background pl-8 pr-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/40"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="tactile-btn rounded-xl bg-secondary px-3.5 py-2 text-xs font-semibold text-secondary-foreground hover:bg-muted"
-                >
-                  Verify
-                </button>
-              </form>
-
-              {searchResult && (
-                <div className="text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 rounded-xl p-2.5 border border-emerald-500/20">
-                  {searchResult}
-                </div>
-              )}
-            </div>
+          {/* Hero Badge */}
+          <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 dark:bg-blue-500/20 px-4 py-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300 border border-blue-500/20 mb-6 shadow-xs">
+            <Sparkles className="size-3.5 text-blue-600 dark:text-blue-400" />
+            <span>Modern Drinking Water Logistics & Station Management</span>
           </div>
 
-          {/* Right Column: The Refill Engine & Interactive Order Ticket */}
-          <div id="refill-engine" className="lg:col-span-7">
-            <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/95 backdrop-blur-xl p-6 sm:p-8 shadow-xl shadow-blue-950/5">
-              
-              {submittedOrder ? (
-                /* Order Confirmation Ticket */
-                <div className="py-8 flex flex-col items-center text-center space-y-5 animate-in fade-in zoom-in-95 duration-300">
-                  <div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/20">
-                    <CheckCircle2 className="size-8" />
-                  </div>
+          {/* Primary Headline */}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.08] max-w-4xl mx-auto">
+            Pure drinking water delivered to your gate.{" "}
+            <span className="text-gradient-primary block mt-1">
+              Managed with precision.
+            </span>
+          </h1>
 
-                  <div>
-                    <h2 className="text-2xl font-black text-foreground tracking-tight">Refill Scheduled!</h2>
-                    <p className="text-xs font-mono text-muted-foreground mt-1">
-                      Tracking Reference: <span className="font-bold text-foreground">{submittedOrder.orderNumber}</span>
-                    </p>
-                  </div>
+          <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Clearwell is an all-in-one water delivery system connecting neighborhood refilling stations, couriers, and households. Transparent 19L carboy swaps, scheduled delivery windows, and synchronized inventory.
+          </p>
 
-                  {/* Perforated Receipt Ticket Aesthetic */}
-                  <div className="w-full max-w-md rounded-2xl border border-dashed border-border/90 bg-muted/30 p-5 text-left font-mono text-xs space-y-2.5 relative">
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Order Item:</span>
-                      <span className="text-foreground font-bold">{submittedOrder.qty} × {submittedOrder.product}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Window:</span>
-                      <span className="text-foreground font-semibold">{submittedOrder.slot}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Empty Carboys:</span>
-                      <span className="text-foreground">{submittedOrder.empties}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Recipient:</span>
-                      <span className="text-foreground">{submittedOrder.name} ({submittedOrder.phone})</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Dropoff Location:</span>
-                      <span className="text-foreground truncate max-w-[200px]">{submittedOrder.address}</span>
-                    </div>
+          {/* Call to Actions */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            <Link
+              href="/login"
+              className="tactile-btn inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary/90"
+            >
+              <span>Sign in to Your Portal</span>
+              <ArrowRight className="size-4" />
+            </Link>
 
-                    <div className="border-t border-border/60 pt-3 mt-3 flex justify-between items-baseline font-bold text-sm">
-                      <span className="text-foreground">Due on Delivery ({submittedOrder.paymentMethod.toUpperCase()}):</span>
-                      <span className="text-primary text-lg tabular-nums">{format(submittedOrder.total)}</span>
-                    </div>
-                  </div>
+            <a
+              href="#how-it-works"
+              className="tactile-btn inline-flex items-center justify-center gap-2 rounded-xl border border-border/80 bg-card/80 px-6 py-3.5 text-sm font-semibold text-foreground hover:bg-muted"
+            >
+              <span>How the System Works</span>
+              <ChevronRight className="size-4 text-muted-foreground" />
+            </a>
+          </div>
 
-                  <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
-                    Our station fleet has queued your refill for route departure. Courier will arrive at your gate during the selected slot.
-                  </p>
+          {/* Key System Statistics Strip */}
+          <div className="mt-14 sm:mt-18 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto text-left">
+            <div className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card/75 backdrop-blur-sm shadow-xs">
+              <span className="text-xs font-medium text-muted-foreground block">Purity Standard</span>
+              <p className="text-xl sm:text-2xl font-bold font-mono text-primary mt-1">0.0001μ</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Reverse Osmosis filtration</p>
+            </div>
 
-                  <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md pt-2">
-                    <Link
-                      href="/login"
-                      className="tactile-btn flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
-                    >
-                      <span>Track in Customer Portal</span>
-                      <ArrowRight className="size-3.5" />
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => setSubmittedOrder(null)}
-                      className="tactile-btn px-4 py-3 rounded-xl border border-border/80 text-xs font-semibold text-foreground hover:bg-muted"
-                    >
-                      Book Another Refill
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                /* Main Interactive Order Form */
-                <form onSubmit={handleOrderSubmit} className="space-y-6">
-                  
-                  {/* Step 1: Select Container */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                        <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">1</span>
-                        Choose Container Type
-                      </label>
-                      <span className="font-mono text-[11px] text-muted-foreground">
-                        {PRODUCTS.length} types in stock
-                      </span>
-                    </div>
+            <div className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card/75 backdrop-blur-sm shadow-xs">
+              <span className="text-xs font-medium text-muted-foreground block">Total Dissolved Solids</span>
+              <p className="text-xl sm:text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1">&lt; 10 ppm</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Ultra-pure laboratory grade</p>
+            </div>
 
-                    <div className="grid gap-2.5 sm:grid-cols-1">
-                      {PRODUCTS.map((p) => {
-                        const isSelected = selectedId === p.id;
-                        return (
-                          <div
-                            key={p.id}
-                            onClick={() => setSelectedId(p.id)}
-                            className={`tactile-card p-3.5 cursor-pointer flex items-center justify-between transition-all ${
-                              isSelected
-                                ? "border-primary bg-primary/5 ring-1 ring-primary/40 shadow-sm"
-                                : "hover:border-border hover:bg-muted/30"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3.5 min-w-0">
-                              <div
-                                className={`flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors ${
-                                  isSelected
-                                    ? "border-primary bg-primary text-primary-foreground"
-                                    : "border-muted-foreground/30 bg-background"
-                                }`}
-                              >
-                                {isSelected && <Check className="size-3 stroke-[3]" />}
-                              </div>
+            <div className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card/75 backdrop-blur-sm shadow-xs">
+              <span className="text-xs font-medium text-muted-foreground block">Route Schedules</span>
+              <p className="text-xl sm:text-2xl font-bold font-mono text-foreground mt-1">4 Shifts</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Daily morning to evening</p>
+            </div>
 
-                              <div className="truncate">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm font-bold text-foreground">
-                                    {p.name}
-                                  </span>
-                                  {p.badge && (
-                                    <span className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full border border-primary/20">
-                                      {p.badge}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-xs text-muted-foreground truncate mt-0.5">
-                                  {p.desc}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="text-right shrink-0 font-mono pl-3">
-                              <span className="text-base font-bold text-foreground tabular-nums">
-                                {format(p.price)}
-                              </span>
-                              <span className="block text-[10px] text-muted-foreground">/{p.unit}</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Step 2: Quantity & Empty Swaps */}
-                  <div className="grid gap-4 sm:grid-cols-2 pt-1">
-                    {/* Stepper with Free Delivery Threshold */}
-                    <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 space-y-2.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                          <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">2</span>
-                          Quantity
-                        </span>
-                        {isFreeDelivery ? (
-                          <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                            FREE DELIVERY
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-mono text-muted-foreground">
-                            {4 - qty} more for Free Delivery
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between pt-1">
-                        <div className="flex items-center gap-3">
-                          <button
-                            type="button"
-                            onClick={() => setQty((q) => Math.max(1, q - 1))}
-                            disabled={qty <= 1}
-                            className="tactile-btn flex size-9 items-center justify-center rounded-xl border border-border/80 bg-card text-foreground hover:bg-muted disabled:opacity-30"
-                          >
-                            <Minus className="size-4" />
-                          </button>
-                          <span className="font-mono text-2xl font-bold tabular-nums text-foreground w-10 text-center">
-                            {qty}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => setQty((q) => Math.min(25, q + 1))}
-                            className="tactile-btn flex size-9 items-center justify-center rounded-xl border border-border/80 bg-card text-foreground hover:bg-muted"
-                          >
-                            <Plus className="size-4" />
-                          </button>
-                        </div>
-
-                        <div className="text-right font-mono text-xs">
-                          <span className="text-muted-foreground">Subtotal: </span>
-                          <span className="font-bold text-foreground tabular-nums text-sm">
-                            {format(subtotal)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Empties Swap Choice */}
-                    <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 space-y-2.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                          <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">3</span>
-                          Empty Swap
-                        </span>
-                        <span className="font-mono text-[11px] text-muted-foreground">
-                          {product.requiresSwap ? "Swap Required" : "Sealed Unit"}
-                        </span>
-                      </div>
-
-                      {product.requiresSwap ? (
-                        <div className="flex gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={() => setSwapConfirmed(true)}
-                            className={`tactile-btn flex-1 rounded-xl py-2 text-xs font-semibold ${
-                              swapConfirmed
-                                ? "bg-primary text-primary-foreground shadow-xs"
-                                : "border border-border/80 bg-card text-foreground hover:bg-muted"
-                            }`}
-                          >
-                            Yes, {qty} empties ready
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSwapConfirmed(false);
-                              setSelectedId("new-jug");
-                            }}
-                            className={`tactile-btn flex-1 rounded-xl py-2 text-xs font-semibold ${
-                              !swapConfirmed
-                                ? "bg-primary text-primary-foreground shadow-xs"
-                                : "border border-border/80 bg-card text-foreground hover:bg-muted"
-                            }`}
-                          >
-                            No empties (Buy new)
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="text-xs text-muted-foreground pt-1.5">
-                          Sealed food-grade bottles. No empty jug required for this item.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Step 3: Route Arrival Window */}
-                  <div className="space-y-2.5">
-                    <label className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">4</span>
-                      Select Delivery Window (Today)
-                    </label>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                      {SLOTS.map((slot) => {
-                        const isSlotActive = slotId === slot.id;
-                        return (
-                          <div
-                            key={slot.id}
-                            onClick={() => setSlotId(slot.id)}
-                            className={`tactile-card p-3 text-center cursor-pointer transition-all ${
-                              isSlotActive
-                                ? "border-primary bg-primary/5 ring-1 ring-primary/40 shadow-xs"
-                                : "hover:border-border hover:bg-muted/30"
-                            }`}
-                          >
-                            <div className="font-mono text-xs font-bold tabular-nums text-foreground">
-                              {slot.time}
-                            </div>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
-                              {slot.label}
-                            </div>
-                            <div className="text-[9px] font-mono text-primary font-semibold mt-1">
-                              {slot.eta}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Step 4: Dropoff Information & Payment Mode */}
-                  <div className="space-y-3 pt-2 border-t border-border/60">
-                    <label className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">5</span>
-                      Dropoff Address & Gate Settlement
-                    </label>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Your full name"
-                        required
-                        className="w-full rounded-xl border border-border/80 bg-background px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/40"
-                      />
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="Mobile # (0917...)"
-                        required
-                        className="w-full rounded-xl border border-border/80 bg-background px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/40 font-mono"
-                      />
-                    </div>
-
-                    <input
-                      type="text"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      placeholder="House / Unit #, Street name, Barangay, Landmarks"
-                      required
-                      className="w-full rounded-xl border border-border/80 bg-background px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/40"
-                    />
-
-                    {/* Payment Mode */}
-                    <div className="flex items-center gap-4 pt-1 text-xs">
-                      <span className="text-muted-foreground font-mono">Payment method:</span>
-                      <label className="flex items-center gap-2 cursor-pointer font-medium">
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={paymentMethod === "cash"}
-                          onChange={() => setPaymentMethod("cash")}
-                          className="accent-primary"
-                        />
-                        <span>Cash on Arrival</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer font-medium">
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={paymentMethod === "gcash"}
-                          onChange={() => setPaymentMethod("gcash")}
-                          className="accent-primary"
-                        />
-                        <span>GCash QR Scan</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Itemized Order Breakdown */}
-                  <div className="rounded-2xl border border-border/80 bg-muted/30 p-4 space-y-2 font-mono text-xs">
-                    <div className="flex justify-between text-muted-foreground">
-                      <span>{qty} × {product.name}</span>
-                      <span className="text-foreground">{format(subtotal)}</span>
-                    </div>
-                    <div className="flex justify-between text-muted-foreground">
-                      <span>Courier Delivery Fee</span>
-                      {isFreeDelivery ? (
-                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                          FREE (4+ Containers)
-                        </span>
-                      ) : (
-                        <span className="text-foreground">{format(deliveryFee)}</span>
-                      )}
-                    </div>
-                    <div className="border-t border-border/60 pt-2.5 flex items-center justify-between text-sm font-bold">
-                      <span className="text-foreground">Total on Delivery:</span>
-                      <span className="text-primary text-lg tabular-nums">{format(total)}</span>
-                    </div>
-                  </div>
-
-                  {/* Submit Refill Button */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="tactile-btn w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90 disabled:opacity-50"
-                  >
-                    {isSubmitting ? (
-                      <span>Dispatching Order to Station Hub...</span>
-                    ) : (
-                      <>
-                        <span>Confirm Doorstep Refill</span>
-                        <span className="font-mono text-xs opacity-90">({format(total)})</span>
-                        <ArrowRight className="size-4" />
-                      </>
-                    )}
-                  </button>
-
-                  <p className="text-center text-[11px] text-muted-foreground">
-                    No online credit card required. Driver collects empty bottles and payment directly at your gate.
-                  </p>
-                </form>
-              )}
+            <div className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card/75 backdrop-blur-sm shadow-xs">
+              <span className="text-xs font-medium text-muted-foreground block">Container Deposit</span>
+              <p className="text-xl sm:text-2xl font-bold font-mono text-foreground mt-1">1:1 Swap</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Clean carboy replacement</p>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* 3. Transparent Standard Rates Matrix */}
-        <section className="mt-20 sm:mt-28 border-t border-border/80 pt-12">
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-8">
-            <div>
-              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-primary">
-                Official Station Catalog
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight mt-1">
-                Transparent Bottle & Refill Rates
-              </h2>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                Standard pricing across all network districts. No hidden utility fees or recurring lock-ins.
-              </p>
-            </div>
-            <span className="text-xs font-mono text-muted-foreground mt-2 sm:mt-0 px-3 py-1 rounded-full bg-muted/40 border border-border/60">
-              Clearwell Standard 2026
+      {/* 3. System Workflow / How It Works */}
+      <section id="how-it-works" className="py-16 sm:py-24 border-t border-border/70 bg-muted/20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+              End-to-End Operational Pipeline
             </span>
-          </div>
-
-          <div className="overflow-x-auto rounded-2xl border border-border/80 bg-card/60 backdrop-blur-sm shadow-xs">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-muted/40 border-b border-border/80 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="py-3.5 px-5">Item & Specification</th>
-                  <th className="py-3.5 px-5">Container Grade</th>
-                  <th className="py-3.5 px-5 text-right">With Empty Swap</th>
-                  <th className="py-3.5 px-5 text-right">Without Swap</th>
-                  <th className="py-3.5 px-5 text-center">Delivery Tier</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60 font-sans">
-                <tr className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3.5 px-5 font-bold text-foreground">19 L Slim Gallon Refill</td>
-                  <td className="py-3.5 px-5 text-muted-foreground">Polycarbonate Slim with Molded Handle</td>
-                  <td className="py-3.5 px-5 text-right font-mono font-bold text-foreground">₱50.00</td>
-                  <td className="py-3.5 px-5 text-right font-mono text-muted-foreground">₱250.00 (New)</td>
-                  <td className="py-3.5 px-5 text-center font-mono text-emerald-600 dark:text-emerald-400 font-semibold">Free on 4+ units</td>
-                </tr>
-                <tr className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3.5 px-5 font-bold text-foreground">19 L Round Dispenser Refill</td>
-                  <td className="py-3.5 px-5 text-muted-foreground">Standard Round (Top/Bottom Load Dispenser)</td>
-                  <td className="py-3.5 px-5 text-right font-mono font-bold text-foreground">₱50.00</td>
-                  <td className="py-3.5 px-5 text-right font-mono text-muted-foreground">₱250.00 (New)</td>
-                  <td className="py-3.5 px-5 text-center font-mono text-emerald-600 dark:text-emerald-400 font-semibold">Free on 4+ units</td>
-                </tr>
-                <tr className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3.5 px-5 font-bold text-foreground">19 L Brand New Carboy + Water</td>
-                  <td className="py-3.5 px-5 text-muted-foreground">Certified Food-Grade BPA-Free Bottle</td>
-                  <td className="py-3.5 px-5 text-right font-mono text-muted-foreground">—</td>
-                  <td className="py-3.5 px-5 text-right font-mono font-bold text-foreground">₱250.00</td>
-                  <td className="py-3.5 px-5 text-center font-mono text-emerald-600 dark:text-emerald-400 font-semibold">Free on 4+ units</td>
-                </tr>
-                <tr className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3.5 px-5 font-bold text-foreground">500 mL Bottled Water Case (24 pcs)</td>
-                  <td className="py-3.5 px-5 text-muted-foreground">Sealed PET Bottles in shrink-wrap carton</td>
-                  <td className="py-3.5 px-5 text-right font-mono text-muted-foreground">—</td>
-                  <td className="py-3.5 px-5 text-right font-mono font-bold text-foreground">₱180.00</td>
-                  <td className="py-3.5 px-5 text-center font-mono text-muted-foreground">₱20 flat per order</td>
-                </tr>
-                <tr className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3.5 px-5 font-bold text-foreground">1 L Bottled Water Case (12 pcs)</td>
-                  <td className="py-3.5 px-5 text-muted-foreground">Sealed 1-Liter Table Bottles in carton</td>
-                  <td className="py-3.5 px-5 text-right font-mono text-muted-foreground">—</td>
-                  <td className="py-3.5 px-5 text-right font-mono font-bold text-foreground">₱160.00</td>
-                  <td className="py-3.5 px-5 text-center font-mono text-muted-foreground">₱20 flat per order</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* 4. Multi-Role Platform Ecosystem */}
-        <section className="mt-20 sm:mt-28 border-t border-border/80 pt-12 pb-16">
-          <div className="mb-8">
-            <span className="font-mono text-xs font-semibold uppercase tracking-wider text-primary">
-              Full Platform Infrastructure
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight mt-1">
-              Integrated Multi-Role Workspaces
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mt-1.5">
+              How the Clearwell System Works
             </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-              Clearwell harmonizes customer ordering, courier GPS routing, and plant operations in real time.
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+              From online order placement to gate delivery and bottle exchange, every stage of the lifecycle is synchronized in real time.
             </p>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
-            {/* Customer Portal */}
-            <div className="tactile-card rounded-2xl p-6 flex flex-col justify-between hover:border-primary/40">
-              <div className="space-y-3">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                  <UserCheck className="size-5" />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {SYSTEM_WORKFLOW.map((item) => (
+              <div
+                key={item.step}
+                className="relative rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-primary/40 transition-colors"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary font-mono font-bold text-sm border border-primary/20">
+                      {item.step}
+                    </span>
+                    <span className="text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                      {item.actor}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-base text-foreground mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {item.desc}
+                  </p>
                 </div>
-                <h3 className="font-bold text-base text-foreground">Customer App</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  One-tap refill reordering, weekly automated schedules, invoice settlements, and live courier tracking.
-                </p>
-              </div>
-              <div className="mt-6 pt-3 border-t border-border/60">
-                <Link
-                  href="/customer/dashboard"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
-                >
-                  <span>Launch Customer View</span>
-                  <ArrowRight className="size-3.5" />
-                </Link>
-              </div>
-            </div>
 
-            {/* Courier Fleet App */}
-            <div className="tactile-card rounded-2xl p-6 flex flex-col justify-between hover:border-primary/40">
-              <div className="space-y-3">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                  <Bike className="size-5" />
+                <div className="mt-5 pt-3 border-t border-border/60 flex items-center gap-1.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="size-3.5" />
+                  <span>Real-time verification</span>
                 </div>
-                <h3 className="font-bold text-base text-foreground">Courier Fleet App</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Mobile interface for delivery riders: turn-by-turn road routes, cash collection tracking, and one-tap delivery completions.
-                </p>
               </div>
-              <div className="mt-6 pt-3 border-t border-border/60">
-                <Link
-                  href="/rider/dashboard"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
-                >
-                  <span>Launch Courier Fleet View</span>
-                  <ArrowRight className="size-3.5" />
-                </Link>
-              </div>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Station Admin Console */}
-            <div className="tactile-card rounded-2xl p-6 flex flex-col justify-between hover:border-primary/40">
-              <div className="space-y-3">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  <Building2 className="size-5" />
-                </div>
-                <h3 className="font-bold text-base text-foreground">Station Admin Console</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Full command center: dynamic fleet dispatching, inventory replenishment, batch invoices, and audit reporting.
-                </p>
-              </div>
-              <div className="mt-6 pt-3 border-t border-border/60">
-                <Link
-                  href="/admin/dashboard"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
-                >
-                  <span>Launch Admin Console</span>
-                  <ArrowRight className="size-3.5" />
-                </Link>
-              </div>
+      {/* 4. Three Unified Apps Breakdown */}
+      <section id="apps" className="py-16 sm:py-24 border-t border-border/70">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+              Unified Ecosystem
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mt-1.5">
+              Three Dedicated Workspaces
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+              Clearwell coordinates customers, delivery couriers, and station managers with role-specific applications tailored to their exact workflow.
+            </p>
+          </div>
+
+          {/* Interactive Role Switcher */}
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex rounded-xl border border-border/80 bg-muted/40 p-1 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setActiveTab("customer")}
+                className={`px-4 py-2 rounded-lg transition-all ${
+                  activeTab === "customer"
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Customer App
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("rider")}
+                className={`px-4 py-2 rounded-lg transition-all ${
+                  activeTab === "rider"
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Courier Mobile App
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("admin")}
+                className={`px-4 py-2 rounded-lg transition-all ${
+                  activeTab === "admin"
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Station Admin Console
+              </button>
             </div>
           </div>
-        </section>
-      </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border/80 bg-muted/20 py-8 text-xs text-muted-foreground">
+          {/* Role Feature Cards */}
+          <div className="rounded-3xl border border-border/80 bg-card/90 backdrop-blur-xl p-6 sm:p-10 shadow-lg">
+            {activeTab === "customer" && (
+              <div className="grid lg:grid-cols-12 gap-8 items-center animate-in fade-in duration-300">
+                <div className="lg:col-span-7 space-y-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                    <UserCheck className="size-3.5" />
+                    For Households & Commercial Clients
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                    Instant Water Refill Booking in 30 Seconds
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Customers can order water refills, select preferred 3-hour arrival slots, and track ongoing deliveries without calling dispatch or waiting in lines.
+                  </p>
+                  
+                  <ul className="space-y-2.5 pt-2 text-xs sm:text-sm text-foreground">
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>One-tap reordering of favorite container quantities</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Live status updates as the rider departs the station and approaches</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Transparent bottle exchange accounting with deposit credit balances</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Automated itemized invoice generation with Cash & GCash options</span>
+                    </li>
+                  </ul>
+
+                  <div className="pt-4">
+                    <Link
+                      href="/login"
+                      className="tactile-btn inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
+                    >
+                      <span>Explore Customer Portal</span>
+                      <ArrowRight className="size-3.5" />
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5 rounded-2xl border border-border/80 bg-muted/30 p-6 space-y-3 font-mono text-xs">
+                  <div className="flex items-center justify-between pb-3 border-b border-border/60">
+                    <span className="font-bold text-foreground">Customer Refill Preview</span>
+                    <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">● Active Dispatch</span>
+                  </div>
+                  <div className="space-y-2 text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>Item:</span>
+                      <strong className="text-foreground">3 × 19L Slim Gallon Refill</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Window:</span>
+                      <strong className="text-foreground">10:00 – 13:00 (Midday)</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Empties:</span>
+                      <strong className="text-foreground">3 bottles ready for swap</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Payment:</span>
+                      <strong className="text-foreground">₱150.00 (Cash on Delivery)</strong>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-background border border-border/70 text-[11px] text-muted-foreground">
+                    ✓ Courier Dave is en route (ETA ~15 mins)
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "rider" && (
+              <div className="grid lg:grid-cols-12 gap-8 items-center animate-in fade-in duration-300">
+                <div className="lg:col-span-7 space-y-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">
+                    <Bike className="size-3.5" />
+                    For Delivery Couriers & Drivers
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                    Glanceable Mobile Route Manifest
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Engineered specifically for riders on motorcycles and trucks. High-contrast typography, large tap targets, and quick actions designed to operate smoothly with gloves or in bright daylight.
+                  </p>
+                  
+                  <ul className="space-y-2.5 pt-2 text-xs sm:text-sm text-foreground">
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>One-tap turn-by-turn road navigation via Google Maps</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Direct phone dialer button for customer arrival calls</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Clear Cash-on-Delivery balance alerts to prevent uncollected payments</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Empty carboy counter to ensure physical bottles match delivery counts</span>
+                    </li>
+                  </ul>
+
+                  <div className="pt-4">
+                    <Link
+                      href="/login"
+                      className="tactile-btn inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
+                    >
+                      <span>Explore Courier App</span>
+                      <ArrowRight className="size-3.5" />
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5 rounded-2xl border border-border/80 bg-muted/30 p-6 space-y-3 font-mono text-xs">
+                  <div className="flex items-center justify-between pb-3 border-b border-border/60">
+                    <span className="font-bold text-foreground">Rider Route Card #1</span>
+                    <span className="text-[11px] text-blue-600 dark:text-blue-400 font-bold">En Route</span>
+                  </div>
+                  <div className="space-y-2 text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>Stop:</span>
+                      <strong className="text-foreground">Maria Santos</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Drop Address:</span>
+                      <strong className="text-foreground truncate max-w-[200px]">Block 4 Lot 12, San Jose</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>To Collect:</span>
+                      <strong className="text-amber-600 dark:text-amber-400 font-bold">₱150.00 COD</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Empty Carboys:</span>
+                      <strong className="text-foreground">3 jugs to collect</strong>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 pt-1">
+                    <div className="flex-1 py-2 text-center rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-[11px]">
+                      Call Customer
+                    </div>
+                    <div className="flex-1 py-2 text-center rounded-lg bg-primary/10 text-primary font-bold text-[11px]">
+                      GPS Route
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "admin" && (
+              <div className="grid lg:grid-cols-12 gap-8 items-center animate-in fade-in duration-300">
+                <div className="lg:col-span-7 space-y-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                    <Building2 className="size-3.5" />
+                    For Station Operators & Dispatchers
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                    Complete Command Over Hub Operations
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Station administrators have total visibility into daily order queues, carboy inventory levels, driver assignments, route completion rates, and daily revenue collection.
+                  </p>
+                  
+                  <ul className="space-y-2.5 pt-2 text-xs sm:text-sm text-foreground">
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Live dispatch board with drag-and-drop order reassignments</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Automated container inventory (filled jugs vs empty carboys in yard)</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>End-of-day driver cash remittance reconciliation & audit log</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="size-4 text-primary shrink-0" />
+                      <span>Customer address database with historical delivery notes</span>
+                    </li>
+                  </ul>
+
+                  <div className="pt-4">
+                    <Link
+                      href="/login"
+                      className="tactile-btn inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
+                    >
+                      <span>Explore Station Admin</span>
+                      <ArrowRight className="size-3.5" />
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5 rounded-2xl border border-border/80 bg-muted/30 p-6 space-y-3 font-mono text-xs">
+                  <div className="flex items-center justify-between pb-3 border-b border-border/60">
+                    <span className="font-bold text-foreground">Station Hub Dashboard</span>
+                    <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">All 4 Routes Active</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-center pt-1">
+                    <div className="p-2.5 rounded-xl bg-background border border-border/70">
+                      <span className="text-[10px] text-muted-foreground block">Deliveries Today</span>
+                      <strong className="text-lg text-foreground font-bold">142 drops</strong>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-background border border-border/70">
+                      <span className="text-[10px] text-muted-foreground block">Yard Inventory</span>
+                      <strong className="text-lg text-primary font-bold">380 jugs</strong>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-background border border-border/70 text-[11px] text-muted-foreground">
+                    Remittance: ₱7,100 collected • 0 failed drops
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Water Purification Standard */}
+      <section id="purification" className="py-16 sm:py-24 border-t border-border/70 bg-muted/20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+              Filtration & Laboratory Standards
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mt-1.5">
+              5-Stage Purity Sequence
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+              Every drop is filtered through our certified water treatment plant, hermetically tested and sealed before delivery dispatch.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5 text-xs">
+            <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs space-y-2">
+              <span className="size-7 rounded-lg bg-primary/10 text-primary font-mono font-bold flex items-center justify-center text-xs">
+                1
+              </span>
+              <h4 className="font-bold text-foreground text-sm">Sediment & Sand</h4>
+              <p className="text-muted-foreground leading-relaxed">
+                Dual multi-media pre-filters trap micro-particles, sand, and particulate matter down to 5 microns.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs space-y-2">
+              <span className="size-7 rounded-lg bg-primary/10 text-primary font-mono font-bold flex items-center justify-center text-xs">
+                2
+              </span>
+              <h4 className="font-bold text-foreground text-sm">Activated Carbon</h4>
+              <p className="text-muted-foreground leading-relaxed">
+                High-grade coconut shell carbon absorbs chlorine, volatile organic compounds, and unwanted odors.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs space-y-2">
+              <span className="size-7 rounded-lg bg-primary/10 text-primary font-mono font-bold flex items-center justify-center text-xs">
+                3
+              </span>
+              <h4 className="font-bold text-foreground text-sm">Reverse Osmosis</h4>
+              <p className="text-muted-foreground leading-relaxed">
+                Industrial RO membranes separate heavy metals, bacteria, and minerals at 0.0001 microns.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs space-y-2">
+              <span className="size-7 rounded-lg bg-primary/10 text-primary font-mono font-bold flex items-center justify-center text-xs">
+                4
+              </span>
+              <h4 className="font-bold text-foreground text-sm">UV Sterilization</h4>
+              <p className="text-muted-foreground leading-relaxed">
+                High-output ultraviolet rays eradicate biological pathogens and micro-organisms in real time.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs space-y-2">
+              <span className="size-7 rounded-lg bg-primary/10 text-primary font-mono font-bold flex items-center justify-center text-xs">
+                5
+              </span>
+              <h4 className="font-bold text-foreground text-sm">Ozone & Tamper Seal</h4>
+              <p className="text-muted-foreground leading-relaxed">
+                Active ozone sanitizes bottle interiors, finalized with heat-shrink tamper-evident cap film.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Pricing & Official Station Catalog */}
+      <section id="pricing" className="py-16 sm:py-24 border-t border-border/70">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-8 sm:mb-12">
+            <div>
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+                Transparent Pricing
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mt-1.5">
+                Standard Rates & Container Specs
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+                Fixed regional rates with zero hidden fees. Free delivery when ordering 4 or more 19L carboys.
+              </p>
+            </div>
+
+            <div className="mt-4 sm:mt-0 flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                <Check className="size-3.5" /> Free Delivery on 4+ Jugs
+              </span>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto rounded-2xl border border-border/80 bg-card shadow-xs">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-muted/40 border-b border-border/80 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <th className="py-3.5 px-5">Product & Container Type</th>
+                  <th className="py-3.5 px-5">Specifications</th>
+                  <th className="py-3.5 px-5 text-right">With Bottle Swap</th>
+                  <th className="py-3.5 px-5 text-right">New Jug (No Swap)</th>
+                  <th className="py-3.5 px-5 text-center">Delivery Tier</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {PRODUCTS.map((p) => (
+                  <tr key={p.name} className="hover:bg-muted/30 transition-colors">
+                    <td className="py-4 px-5">
+                      <strong className="text-foreground text-sm block">{p.name}</strong>
+                      <span className="text-muted-foreground text-[11px]">{p.type}</span>
+                    </td>
+                    <td className="py-4 px-5 text-muted-foreground max-w-xs">
+                      {p.specs}
+                    </td>
+                    <td className="py-4 px-5 text-right font-mono font-bold text-foreground text-sm">
+                      {p.refillPrice ? `₱${p.refillPrice.toFixed(2)}` : "—"}
+                    </td>
+                    <td className="py-4 px-5 text-right font-mono text-muted-foreground">
+                      ₱{p.newPrice.toFixed(2)}
+                    </td>
+                    <td className="py-4 px-5 text-center font-medium">
+                      {p.name.includes("19L") ? (
+                        <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]">
+                          Free on 4+ units
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-[11px]">
+                          ₱20 flat per order
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Schedule Windows Section */}
+      <section className="py-16 sm:py-24 border-t border-border/70 bg-muted/20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+              Reliable Daily Dispatches
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mt-1.5">
+              Scheduled Delivery Windows
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+              We operate 4 scheduled route departures every day to ensure fast, reliable fulfillment across all municipal sectors.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {SCHEDULE_WINDOWS.map((slot) => (
+              <div
+                key={slot.id}
+                className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-primary uppercase font-mono">
+                    {slot.name}
+                  </span>
+                  <Clock className="size-4 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-bold font-mono text-foreground">
+                  {slot.time}
+                </h3>
+                <span className="inline-block text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
+                  {slot.cutoff}
+                </span>
+                <p className="text-xs text-muted-foreground leading-relaxed pt-1 border-t border-border/60">
+                  {slot.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8. Interactive Frequently Asked Questions */}
+      <section id="faq" className="py-16 sm:py-24 border-t border-border/70">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+              Common Inquiries
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mt-1.5">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2">
+              Everything you need to know about our water delivery service, empty bottle swaps, and corporate logistics.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {FAQS.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  className="rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs transition-colors"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-muted/30 transition-colors"
+                  >
+                    <span className="font-semibold text-sm sm:text-base text-foreground">
+                      {faq.q}
+                    </span>
+                    <ChevronDown
+                      className={`size-4 text-muted-foreground shrink-0 transition-transform duration-200 ${
+                        isOpen ? "rotate-180 text-primary" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-muted-foreground leading-relaxed border-t border-border/50">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Support desk callout */}
+          <div className="mt-10 rounded-2xl border border-border/80 bg-muted/30 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h4 className="font-bold text-sm text-foreground">Still have questions?</h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Our station support team is available Monday through Saturday, 7:00 AM – 7:00 PM.
+              </p>
+            </div>
+            <Link
+              href="/login"
+              className="tactile-btn inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors shrink-0"
+            >
+              <Phone className="size-3.5" />
+              <span>Contact Station Desk</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. Final Call to Action */}
+      <section className="py-16 sm:py-20 border-t border-border/70 bg-gradient-to-b from-background to-muted/40">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto border border-primary/20">
+            <Droplets className="size-6" />
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
+            Ready to experience effortless water delivery?
+          </h2>
+
+          <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            Sign in to start booking refills, manage your daily courier routes, or access station administration console.
+          </p>
+
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/login"
+              className="tactile-btn inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary/90"
+            >
+              <span>Sign in to Clearwell</span>
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 10. Footer */}
+      <footer className="border-t border-border/80 bg-muted/20 py-10 text-xs text-muted-foreground">
         <div className="mx-auto flex max-w-7xl flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2">
-            <Droplets className="size-4 text-primary" />
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-6 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <Droplets className="size-3.5" />
+            </div>
             <span className="font-bold text-foreground">Clearwell Water Technologies</span>
             <span>• Drinking Water Logistics System</span>
           </div>
@@ -906,8 +911,8 @@ export default function Home() {
             <Link href="/privacy" className="hover:text-foreground transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/login" className="hover:text-foreground transition-colors">
-              Staff Sign In
+            <Link href="/login" className="hover:text-foreground transition-colors font-medium text-primary">
+              Portal Sign In
             </Link>
           </div>
         </div>
