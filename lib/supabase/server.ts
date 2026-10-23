@@ -5,8 +5,8 @@ export async function createClient() {
   const cookieStore = await cookies()
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
     {
       cookies: {
         getAll() {
@@ -30,14 +30,14 @@ export async function createClient() {
 
 export async function createAdminClient() {
   const adminKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
   
   // Use admin key if valid, otherwise fallback to anon key to avoid 'Invalid API Key' errors
   const key = adminKey && adminKey !== 'your_supabase_service_role_key_here' ? adminKey : anonKey
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    key!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    key,
     {
       cookies: {
         getAll() {

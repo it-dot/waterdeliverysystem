@@ -67,6 +67,10 @@ export function RealtimeProvider() {
   const userInfoRef = useRef<{ id: string; role: string } | null>(null)
 
   useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return
+    }
+
     // Fetch and track active user credentials for targeted event filtering
     const fetchUser = async () => {
       try {

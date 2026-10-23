@@ -7,6 +7,8 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { createClient } from "@/lib/supabase/server"
 import { getAuthUser } from "@/lib/services/auth/auth.service"
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Rider | Clearwell",
   description: "Clearwell water delivery rider app",

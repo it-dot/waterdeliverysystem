@@ -66,17 +66,16 @@ function StatCard({
           <Icon className="size-4" />
         </div>
       </div>
-      
+
       <div className="mt-4 flex flex-col gap-1 relative z-10">
         <h3 className="text-3xl font-extrabold tracking-tight text-foreground font-mono tabular-nums">{value}</h3>
         <div className="flex items-center gap-1.5 mt-1">
-          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold border ${
-            trend === "up"
+          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold border ${trend === "up"
               ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
               : trend === "down"
-              ? "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20"
-              : "bg-muted/60 text-muted-foreground border-border/70"
-          }`}>
+                ? "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20"
+                : "bg-muted/60 text-muted-foreground border-border/70"
+            }`}>
             {trend === "up" ? (
               <TrendingUp className="size-3" />
             ) : trend === "down" ? (
@@ -108,12 +107,12 @@ function RecentOrderRow({
   date: string
 }) {
   const statusLower = status.toLowerCase()
-  const statusConfig = 
+  const statusConfig =
     statusLower === 'delivered' ? { dot: 'bg-emerald-500', pill: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' } :
-    statusLower === 'in-transit' ? { dot: 'bg-blue-500 animate-pulse', pill: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20' } :
-    statusLower === 'pending' ? { dot: 'bg-amber-500', pill: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20' } :
-    statusLower === 'processing' ? { dot: 'bg-purple-500', pill: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20' } :
-    { dot: 'bg-red-500', pill: 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20' }
+      statusLower === 'in-transit' ? { dot: 'bg-blue-500 animate-pulse', pill: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20' } :
+        statusLower === 'pending' ? { dot: 'bg-amber-500', pill: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20' } :
+          statusLower === 'processing' ? { dot: 'bg-purple-500', pill: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20' } :
+            { dot: 'bg-red-500', pill: 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20' }
 
   const initials = customer.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
 

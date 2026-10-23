@@ -8,6 +8,9 @@ export const getAuthUser = cache(async () => {
     const supabase = await createClient()
     return await supabase.auth.getUser()
   } catch (err: any) {
+    if (err?.digest === 'DYNAMIC_SERVER_USAGE' || err?.message?.includes('Dynamic server usage')) {
+      throw err
+    }
     console.error('Supabase Auth error in getAuthUser:', err?.message || err)
     return { data: { user: null }, error: err }
   }
@@ -47,6 +50,9 @@ export const getCurrentUser = cache(async () => {
       error: null
     }
   } catch (err: any) {
+    if (err?.digest === 'DYNAMIC_SERVER_USAGE' || err?.message?.includes('Dynamic server usage')) {
+      throw err
+    }
     console.error('Supabase Auth error in getCurrentUser:', err?.message || err)
     return { data: null, error: err?.message || 'Failed to authenticate user' }
   }

@@ -7,6 +7,8 @@ import { AdminHeader } from "@/components/admin/admin-header"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { getAuthUser } from "@/lib/services/auth/auth.service"
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Admin | Clearwell",
   description: "Clearwell water delivery admin dashboard",
